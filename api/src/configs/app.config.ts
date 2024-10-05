@@ -3,6 +3,7 @@ import Cookieparser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import path from 'path';
+import routers from './router.config';
 const app = express();
 app.use(
   cors({
@@ -17,6 +18,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../../../uploads')));
 app.use('/api/hello', (req, res) => {
   res.send('Hello World');
 });
-
+routers.forEach(({ path, router }) => {
+  app.use(path, router);
+});
 
 export default app;
