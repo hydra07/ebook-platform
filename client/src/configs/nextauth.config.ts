@@ -13,7 +13,7 @@ const authOptions: AuthOptions = {
     maxAge: 2 * 60 * 60,
   },
   callbacks: {
-    async signIn({user,account,profile,email,credentials ){
+    async signIn({user,account,profile,email,credentials} ){
       if (!account) return false;
       return true
     }
@@ -22,4 +22,4 @@ const authOptions: AuthOptions = {
 
 
 //Auth service 
-const 
+// const 
