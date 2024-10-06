@@ -1,0 +1,12 @@
+### Test POST /auth
+POST http://localhost:5000/api/auth
+Content-Type: application/json
+
+{
+  "provider": "exampleProvider",
+  "providerAccountId": "123456",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "image": "http://example.com/image.jpg",
+  "username": "johndoe"
+}
