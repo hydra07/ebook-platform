@@ -1,40 +1,58 @@
-
 //theme,bookOption,bookStyle,viewerLayout,
 
-import {useCallback} from "react";
-import useEbookStore from "@/hooks/useEbookStore";
+import useEbookStore from '@/hooks/useEbookStore';
+import { useCallback } from 'react';
 
-export  default  function useBookStyle({ viewerRef }: any){
-    const { theme, setTheme ,bookOption,setBookOption, viewerLayout,setViewerLayout} = useEbookStore();
-    const onThemeChange = useCallback((_type: 'dark' | 'light') => {
-        setTheme(_type === 'dark' ? '/themes/dark.theme.css' : '/themes/light.theme.css');
-    }, [viewerRef]);
+export default function useBookStyle({ viewerRef }: any) {
 
-    // đọc dọc,ngang
-    const onDirection = useCallback((_type:  'Horizontal' | 'Vertical') => {
-        if (_type === 'Horizontal') {
-            setBookOption({ ...bookOption,flow: 'paginated' });
-        } else {
-            setBookOption({ ...bookOption,flow: 'scrolled-doc' });
-        }
-    },[viewerRef,bookOption]);
+  const {
+    theme,
+    setTheme,
+    bookOption,
+    setBookOption,
+    viewerLayout,
+    setViewerLayout,
+  } = useEbookStore();
+  const onThemeChange = useCallback(
+    (_type: 'dark' | 'light') => {
+      setTheme(
+        _type === 'dark' ? '/themes/dark.theme.css' : '/themes/light.theme.css',
+      );
+    },
+    [viewerRef],
+  );
 
-    // phân trang
-    const onViewType = useCallback((_isSpread: boolean) => {
-        if (_isSpread) {
-            setBookOption({ ...bookOption,spread: 'auto' });
-        } else {
-            setBookOption({ ...bookOption,spread: 'none' });
-        }
-    },[viewerRef,bookOption])
+  // đọc dọc,ngang
+  const onDirection = useCallback(
+    (_type: 'Horizontal' | 'Vertical') => {
+      if (_type === 'Horizontal') {
+        setBookOption({ ...bookOption, flow: 'paginated' });
+      } else {
+        setBookOption({ ...bookOption, flow: 'scrolled-doc' });
+      }
+    },
+    [viewerRef, bookOption],
+  );
 
-    return {
-        theme,
-        onThemeChange,
-        viewerLayout,
-        setViewerLayout,
-        bookOption,
-        onDirection,
-        onViewType
-    }
+  // phân trang
+  const onViewType = useCallback(
+    (_isSpread: boolean) => {
+      if (_isSpread) {
+        setBookOption({ ...bookOption, spread: 'auto' });
+      } else {
+        setBookOption({ ...bookOption, spread: 'none' });
+      }
+    },
+    [viewerRef, bookOption],
+  );
+
+  return {
+    theme,
+    onThemeChange,
+    viewerLayout,
+    setViewerLayout,
+    bookOption,
+    onDirection,
+    onViewType,
+  };
 }
