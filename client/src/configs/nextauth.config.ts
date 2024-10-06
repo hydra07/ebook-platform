@@ -14,7 +14,7 @@ const authOptions: AuthOptions = {
     maxAge: 2 * 60 * 60,
   },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({user,account,profile,email,credentials} ){
       if (!account) return false;
       const auth = await authenticate(user, account);
       console.log(auth);
@@ -42,4 +42,6 @@ async function authenticate(user: any, account: any) {
   return res.data;
 }
 
+//Auth service 
+// const 
 export default authOptions;
