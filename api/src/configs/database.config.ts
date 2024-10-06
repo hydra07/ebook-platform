@@ -38,6 +38,7 @@ export default async function initializeDatabase(): Promise<mongoose.Connection>
       .catch((error) => {
         console.error('💔 Failed to connect to MongoDB', error);
         throw error;
+        
       });
   }
 
