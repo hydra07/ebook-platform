@@ -5,6 +5,7 @@ import express from 'express';
 import path from 'path';
 import bookRouter from '../router/book.router';
 
+import routers from './router.config';
 const app = express();
 app.use(
   cors({
@@ -20,6 +21,8 @@ app.use('/api/books', bookRouter);
 app.use('/api/hello', (req, res) => {
   res.send('Hello World');
 });
-
+routers.forEach(({ path, router }) => {
+  app.use(path, router);
+});
 
 export default app;
