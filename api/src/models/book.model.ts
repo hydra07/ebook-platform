@@ -9,7 +9,7 @@ interface IBook extends Document {
   status: string;
   createdAt: Date;
   lastUpdateAt: Date;
-  url: string;
+  bookUrl: string;
   author: Types.ObjectId;
 }
 
@@ -45,7 +45,7 @@ const bookSchema = new Schema<IBook>({
     type: Date,
     default: Date.now,
   },
-  url: {
+  bookUrl: {
     type: String,
     required: true,
     trim: true,

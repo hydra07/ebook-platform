@@ -6,5 +6,5 @@ export default cleanEnv(process.env, {
   JWT_SECRET: str({ default: 'secret' }),
   REFRESH_SECRET: str({ default: 'refresh' }),
   EXPIRE_JWT: str({ default: '2h' }),
-  EXPIRE_REFRESH: str({ default: '7d' }),
+  EXPIRE_REFRESH: str({ default: '7d' })
 });
