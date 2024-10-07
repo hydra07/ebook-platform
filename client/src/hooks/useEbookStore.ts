@@ -115,8 +115,8 @@ const initialColor: Color[] = [
 const initialViewerLayout: ViewerLayout = {
   MIN_VIEWER_WIDTH: 600,
   MIN_VIEWER_HEIGHT: 300,
-  VIEWER_HEADER_HEIGHT: 35,
-  VIEWER_FOOTER_HEIGHT: 35,
+  VIEWER_HEADER_HEIGHT: 40,
+  VIEWER_FOOTER_HEIGHT: 40,
   VIEWER_SIDEMENU_WIDTH: 0,
 };
 

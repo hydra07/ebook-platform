@@ -35,7 +35,7 @@ async function authenticate(
       const newUser = new User({
         username: profile.username || profile.name,
         email: profile.email,
-        avatar: profile.image,
+        image: profile.image,
         role: ['user'],
         provider: provider.provider,
         providerId: provider.providerAccountId,

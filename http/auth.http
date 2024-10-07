@@ -10,3 +10,15 @@ Content-Type: application/json
   "image": "http://example.com/image.jpg",
   "username": "johndoe"
 }
+
+
+
+
+### test token
+POST http://localhost:5000/api/auth/token
+Content-Type: application/json
+
+{
+  "provider": "google",
+  "providerAccountId": "118303620303769287374"
+}

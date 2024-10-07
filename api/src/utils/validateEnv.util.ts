@@ -7,4 +7,8 @@ export default cleanEnv(process.env, {
   REFRESH_SECRET: str({ default: 'refresh' }),
   EXPIRE_JWT: str({ default: '2h' }),
   EXPIRE_REFRESH: str({ default: '7d' }),
+
+  CLOUDINARY_CLOUD_NAME: str(),
+  CLOUDINARY_API_KEY: str(),
+  CLOUDINARY_API_SECRET: str(),
 });

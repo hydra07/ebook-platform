@@ -38,6 +38,7 @@ interface HeaderProps {
     removeBookmark: (cfi: string) => void;
     isBookmarkAdded: boolean;
   };
+  height?: number;
 }
 interface TocProps {
   onLocation: (loc: string) => void;
@@ -59,9 +60,19 @@ interface BookmarksProps {
   };
 }
 
-export default function Header({ onLocation, style, bookmark }: HeaderProps) {
+export default function Header({
+  onLocation,
+  style,
+  bookmark,
+  height = 30,
+}: HeaderProps) {
   return (
-    <header className="flex justify-between items-center p-4 border-b h-[20px]">
+    <header
+      className={cn(
+        'flex justify-between items-center p-4 mb-1',
+        `h-[${height}px]`,
+      )}
+    >
       <Toc onLocation={onLocation} />
       <div className="flex space-x-2">
         <Bookmarks bookmark={bookmark} onLocation={onLocation} />
@@ -163,14 +174,12 @@ function Style({ style }: StyleProps) {
           className="hover:bg-gray-200 dark:hover:bg-gray-800"
         >
           <Settings className="h-6 w-6" />
-          <span className="sr-only">Reading Settings</span>
+          <span className="sr-only">Settings</span>
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[300px] sm:w-[400px]">
         <SheetHeader>
-          <SheetTitle className="text-2xl font-bold">
-            Reading Settings
-          </SheetTitle>
+          <SheetTitle className="text-2xl font-bold">Settings</SheetTitle>
         </SheetHeader>
         <div className="py-6 space-y-6">
           <div className="space-y-2">
@@ -281,44 +290,47 @@ function Bookmarks({ onLocation, bookmark }: BookmarksProps) {
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Bookmarks</SheetTitle>
+            <SheetTitle className="text-2xl font-bold">Bookmarks</SheetTitle>
           </SheetHeader>
-          <div className="py-4">
-            {bookMarks.length === 0 ? (
-              <div className="text-center text-gray-400">
-                No bookmarks added yet
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {bookMarks.map((bookmark) => (
-                  <SheetClose key={bookmark.key}>
-                    <Button
-                      variant="ghost"
-                      onClick={() => goToBookmark(bookmark)}
-                    >
-                      Page {bookmark.page}
-                      {' - '}
-                      {bookmark.chapter !== undefined
-                        ? bookmark.chapter
-                        : bookmark.name}
-                    </Button>
-                  </SheetClose>
-                ))}
-              </div>
-            )}
-
-            {/* <ul className="space-y-2">
-              <li>
-                <Button variant="ghost">Page 10: Important quote</Button>
-              </li>
-              <li>
-                <Button variant="ghost">Page 25: Key concept</Button>
-              </li>
-              <li>
-                <Button variant="ghost">Page 42: Remember this</Button>
-              </li>
-            </ul> */}
-          </div>
+          <ScrollArea className="h-[calc(100vh-80px)] mt-6">
+            <motion.div
+              className="flex flex-col space-y-2"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
+              {bookMarks.length === 0 ? (
+                <div className="text-center text-gray-400">
+                  No bookmarks added yet
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {bookMarks.map((bookmark) => (
+                    <motion.div key={bookmark.key} variants={itemVariants}>
+                      <SheetClose>
+                        <Button
+                          variant="ghost"
+                          onClick={() => goToBookmark(bookmark)}
+                        >
+                          <motion.span
+                            className="text-sm font-medium"
+                            whileHover={{ x: 5 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                          >
+                            Page {bookmark.page}
+                            {' - '}
+                            {bookmark.chapter !== undefined
+                              ? bookmark.chapter
+                              : bookmark.name}
+                          </motion.span>
+                        </Button>
+                      </SheetClose>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </div>

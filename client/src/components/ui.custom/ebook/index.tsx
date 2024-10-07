@@ -12,7 +12,7 @@ import Loading from './loading';
 // import {Rendition} from "epubjs";
 export default function EbookViewer() {
   const [url, setUrl] = useState<string>(
-    'Cú Sốc Tương Lai - Alvin Toffler.epub',
+    'https://res.cloudinary.com/dws8h9utn/raw/upload/v1728325552/Cu%C3%8C%C2%81%20So%C3%8C%C2%82%C3%8C%C2%81c%20Tu%C3%8C%C2%9Bo%C3%8C%C2%9Bng%20Lai%20-%20Alvin%20Toffler.epub',
   );
   const viewerRef = useRef<any>(null);
   const {

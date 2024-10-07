@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import authenticate from '../services/auth.service';
+import authenticate, { decode, generateToken } from '../services/auth.service';
 
 const router = Router();
 
@@ -13,4 +13,15 @@ router.post('/', async (req, res) => {
   return res.json(result);
 });
 
+router.post('/token', async (req, res) => {
+  const { provider, providerAccountId } = req.body;
+  const result = await generateToken({ provider, providerAccountId });
+  return res.json(result);
+});
+
+router.get('/decode/:token', async (req, res) => {
+  const { token } = req.params;
+  const result = await decode(token);
+  return res.json(result);
+});
 export default router;
