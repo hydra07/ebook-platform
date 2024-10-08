@@ -40,6 +40,10 @@ interface HeaderProps {
     onDirection: (type: 'Horizontal' | 'Vertical') => void;
     onThemeChange: (type: 'dark' | 'light') => void;
     onViewType: (isSpread: boolean) => void;
+    onFontSize: (size: number) => void;
+    onLineHeight: (size: number) => void;
+    onMarginVertical: (size: number) => void;
+    onMarginHorizontal: (size: number) => void;
     bookOption: BookOption;
   };
   bookmark: {
@@ -64,6 +68,10 @@ interface StyleProps {
     onDirection: (type: 'Horizontal' | 'Vertical') => void;
     onThemeChange: (type: 'dark' | 'light') => void;
     onViewType: (isSpread: boolean) => void;
+    onFontSize: (size: number) => void;
+    onLineHeight: (size: number) => void;
+    onMarginVertical: (size: number) => void;
+    onMarginHorizontal: (size: number) => void;
     bookOption: BookOption;
   };
 }
@@ -194,8 +202,7 @@ function Toc({ onLocation }: TocProps) {
 }
 
 function Style({ style }: StyleProps) {
-  const [isSpread, setIsSpread] = useState<boolean>(false);
-  const [isHorizontal, setIsHorizontal] = useState<boolean>(false);
+  const { bookStyle, bookOption, theme } = useEbookStore();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -214,13 +221,65 @@ function Style({ style }: StyleProps) {
         </SheetHeader>
         <div className="py-6 space-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Font Size</Label>
+            <Label className="text-sm font-medium">
+              Font Size : {bookStyle.fontSize}
+            </Label>
             <Slider
               id="font-size"
-              min={12}
-              max={24}
+              min={16}
+              max={30}
               step={1}
-              defaultValue={[16]}
+              onValueChange={(value) => style.onFontSize(value[0])}
+              // onValueChange={(value) => console.log('value', value)}
+              defaultValue={[bookStyle.fontSize]}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              Line Height : {bookStyle.lineHeight}
+            </Label>
+            <Slider
+              id="line-height"
+              min={1}
+              max={3}
+              step={0.2}
+              onValueChange={(value) => style.onLineHeight(value[0])}
+              // onValueChange={(value) => console.log('value', value)}
+              defaultValue={[bookStyle.lineHeight]}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              Margin Vertical : {bookStyle.marginVertical}
+            </Label>
+            <Slider
+              id="margin-vertical"
+              min={0}
+              max={25}
+              step={1}
+              onValueChange={(value) => style.onMarginVertical(value[0])}
+              // onValueChange={(value) => console.log('value', value)}
+              defaultValue={[bookStyle.marginVertical]}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              Margin Horizontal : {bookStyle.marginHorizontal}
+            </Label>
+            <Slider
+              id="margin-horizontal"
+              min={0}
+              max={25}
+              step={1}
+              onValueChange={(value) => style.onMarginHorizontal(value[0])}
+              // onValueChange={(value) => console.log('value', value)}
+              defaultValue={[bookStyle.marginHorizontal]}
               className="w-full"
             />
           </div>
@@ -228,6 +287,7 @@ function Style({ style }: StyleProps) {
           <div className="space-y-2">
             <Label className="text-sm font-medium">Theme</Label>
             <Select
+              defaultValue={theme.split('/').pop()?.split('.')[0]}
               onValueChange={(value) =>
                 style.onThemeChange(value as 'dark' | 'light')
               }
@@ -245,36 +305,33 @@ function Style({ style }: StyleProps) {
           <div className="flex items-center justify-between">
             <Label className="text-sm font-medium">Reading Direction</Label>
             <div className="flex flex-row space-x-2">
-              <span>Vertical</span>
+              <span>Horizontal</span>
               <Switch
                 id="direction"
-                defaultChecked={isHorizontal}
+                defaultChecked={bookOption.flow === 'paginated'}
                 onCheckedChange={(checked) => {
-                  console.log('checked', checked);
-                  style.onDirection(checked ? 'Horizontal' : 'Vertical');
-                  setIsHorizontal(checked);
+                  checked
+                    ? style.onDirection('Horizontal')
+                    : style.onDirection('Vertical');
                 }}
               />
-              <span>Horizontal</span>
+              <span>Vertical</span>
             </div>
-            {/* <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDirection('Horizontal')}
-              className="w-28"
-            >
-              <ArrowLeftRight className="h-4 w-4 mr-2" />
-              Horizontal
-            </Button> */}
           </div>
-
           <div className="flex items-center justify-between">
             <Label className="text-sm font-medium">Spread View</Label>
-            <Switch
-              id="view-type"
-              onCheckedChange={(checked) => style.onViewType(checked)}
-              disabled={isHorizontal}
-            />
+            <div className="flex flex-row space-x-2">
+              <span>Single Page</span>
+              <Switch
+                id="view-type"
+                defaultChecked={bookOption.spread === 'auto'}
+                onCheckedChange={(checked) => {
+                  checked ? style.onViewType(true) : style.onViewType(false);
+                }}
+                disabled={bookOption.flow === 'scrolled-doc'}
+              />
+              <span>Double Page</span>
+            </div>
           </div>
         </div>
       </SheetContent>
