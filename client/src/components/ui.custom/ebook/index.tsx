@@ -6,6 +6,8 @@ import { ReactEpubViewer as ReactViewer } from 'react-epub-viewer';
 import 'regenerator-runtime/runtime';
 // import ReactViewer from '@/modules/Reader';
 import useBookMark from '@/hooks/ebook/useBookmark';
+import useSelection from '@/hooks/ebook/useSelection';
+import Context from './context';
 import Footer from './footer';
 import Header from './header';
 import Loading from './loading';
@@ -35,6 +37,20 @@ export default function EbookViewer() {
   const { addBookmark, removeBookmark, isBookmarkAdded } = useBookMark({
     viewerRef,
   });
+
+  const {
+    selection,
+    setOpen,
+    open,
+    onSelection,
+    onHighlight,
+    onRemoveHighlight,
+    goToHighLight,
+    onHighlightClick,
+  } = useSelection({
+    viewerRef,
+    onLocationChange,
+  });
   // const [rendition, setRendition] = useState<Rendition | null>(null);
   return (
     <>
@@ -52,6 +68,20 @@ export default function EbookViewer() {
           removeBookmark,
           isBookmarkAdded,
         }}
+        hightlight={{
+          onSelection,
+          onHighlight,
+          onRemoveHighlight,
+          goToHighLight,
+          onHighlightClick,
+        }}
+      />
+      <Context
+        selection={selection}
+        onRemoveHighlight={onRemoveHighlight}
+        isOpen={open}
+        setIsOpen={setOpen}
+        onHighlight={onHighlight}
       />
       <ReactViewer
         url={url}
@@ -61,6 +91,7 @@ export default function EbookViewer() {
         viewerStyleURL={theme}
         viewerLayout={viewerLayout}
         viewerOption={bookOption}
+        onSelection={onSelection}
         loadingView={<Loading />}
       />
       <Footer

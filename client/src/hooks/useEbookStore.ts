@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 // Interfaces and types (unchanged)
-interface Highlight {
+export interface Highlight {
   key: number;
   cfiRange: string;
   content: string;
@@ -45,7 +45,7 @@ interface ViewerLayout {
   VIEWER_SIDEMENU_WIDTH: number;
 }
 
-interface Color {
+export interface Color {
   name: string;
   code: string;
 }
@@ -68,6 +68,11 @@ interface EbookState {
 
   bookMarks: any[];
   setBookMarks: (bookmark: any[]) => void;
+
+  highlights: Highlight[];
+  setHighlights: (highlights: Highlight[]) => void;
+
+  color: Color[];
 }
 
 // Initial state values (unchanged)
@@ -120,7 +125,7 @@ const initialViewerLayout: ViewerLayout = {
   VIEWER_SIDEMENU_WIDTH: 0,
 };
 
-const initialTheme: string = '/themes/light.theme.css';
+const initialTheme: string = '/themes/dark.theme.css';
 
 // Zustand store
 const useEbookStore = create<EbookState>((set, get) => ({
@@ -130,6 +135,8 @@ const useEbookStore = create<EbookState>((set, get) => ({
   theme: initialTheme,
   bookOption: initialBookOption,
   bookMarks: [],
+  highlights: [],
+  color: initialColor,
 
   setCurrentLocation: (location: Page) =>
     set(
@@ -185,6 +192,13 @@ const useEbookStore = create<EbookState>((set, get) => ({
     set(
       produce((state) => {
         state.bookMarks = bookmarks;
+      }),
+    ),
+
+  setHighlights: (highlights: Highlight[]) =>
+    set(
+      produce((state) => {
+        state.highlights = highlights;
       }),
     ),
 }));

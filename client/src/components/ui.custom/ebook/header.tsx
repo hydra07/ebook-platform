@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -21,8 +22,16 @@ import { Switch } from '@/components/ui/switch';
 import useEbookStore from '@/hooks/useEbookStore';
 import { cn } from '@/lib/utils';
 import { BookOption } from '@/types/ebook';
-import { motion } from 'framer-motion';
-import { AlignLeft, BookCopy, Bookmark, Settings } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlignLeft,
+  BookCopy,
+  Bookmark,
+  Edit2,
+  Highlighter,
+  Settings,
+  Trash2,
+} from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 interface HeaderProps {
@@ -37,6 +46,13 @@ interface HeaderProps {
     addBookmark: (currentLocation: any) => void;
     removeBookmark: (cfi: string) => void;
     isBookmarkAdded: boolean;
+  };
+  hightlight: {
+    onSelection: (cfiRange: string) => void;
+    onHighlight: (highlight: any) => void;
+    onRemoveHighlight: (highlight: any) => void;
+    goToHighLight: (highlight: any) => void;
+    onHighlightClick: (highlight: any) => void;
   };
   height?: number;
 }
@@ -60,21 +76,36 @@ interface BookmarksProps {
   };
 }
 
+interface HighlightProps {
+  onSelection: (cfiRange: string) => void;
+  goToHighlight: (highlight: any) => void;
+  onRemoveHighlight: (highlight: any) => void;
+  onHighlightClick: (highlight: any) => void;
+}
+
 export default function Header({
   onLocation,
   style,
   bookmark,
-  height = 30,
+  hightlight,
+  height,
 }: HeaderProps) {
   return (
     <header
       className={cn(
         'flex justify-between items-center p-4 mb-1',
-        `h-[${height}px]`,
+        // `h-[${height ? height : 30}px]`,
+        'h-[30px]',
       )}
     >
       <Toc onLocation={onLocation} />
       <div className="flex space-x-2">
+        <Highlight
+          goToHighlight={hightlight.goToHighLight}
+          onRemoveHighlight={hightlight.onRemoveHighlight}
+          onSelection={hightlight.onSelection}
+          onHighlightClick={hightlight.onHighlightClick}
+        />
         <Bookmarks bookmark={bookmark} onLocation={onLocation} />
         <Style style={style} />
       </div>
@@ -334,5 +365,125 @@ function Bookmarks({ onLocation, bookmark }: BookmarksProps) {
         </SheetContent>
       </Sheet>
     </div>
+  );
+}
+
+function Highlight({
+  goToHighlight,
+  onRemoveHighlight,
+  onSelection,
+  onHighlightClick,
+}: HighlightProps) {
+  const { highlights, color } = useEbookStore();
+  const [editingHighlight, setEditingHighlight] = useState<any>(null);
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:bg-gray-200 dark:hover:bg-gray-800"
+        >
+          <Highlighter className="h-6 w-6" />
+          <span className="sr-only">Highlights</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+        <SheetHeader>
+          <SheetTitle className="text-2xl font-bold">Highlights</SheetTitle>
+        </SheetHeader>
+        <ScrollArea className="h-[calc(100vh-80px)] mt-6">
+          <motion.div
+            className="flex flex-col space-y-2 pr-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
+            <AnimatePresence>
+              {highlights.map((highlight) => (
+                <motion.div
+                  key={highlight.key}
+                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SheetClose asChild>
+                    <Card className="overflow-hidden">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between space-x-4">
+                          <motion.div
+                            className="flex-1 text-sm cursor-pointer"
+                            style={{ color: highlight.color }}
+                            onClick={() => goToHighlight(highlight)}
+                            whileHover={{ scale: 1.01 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                          >
+                            "{highlight.content.substring(0, 100)}..."
+                          </motion.div>
+                          <div className="flex flex-col space-y-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="px-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onHighlightClick(highlight);
+                              }}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="px-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onRemoveHighlight(highlight);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <AnimatePresence>
+                          {editingHighlight?.key === highlight.key && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="mt-4"
+                            >
+                              <div className="flex flex-wrap gap-2">
+                                {color.map((colorItem) => (
+                                  <motion.button
+                                    key={colorItem.name}
+                                    className="w-8 h-8 rounded-full"
+                                    style={{ backgroundColor: colorItem.code }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      // handleColorChange(highlight, colorItem.code);
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </CardContent>
+                    </Card>
+                  </SheetClose>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -11,14 +11,14 @@ interface FooterProps {
 
 const AnimatedText = ({
   children,
-  key,
-}: {
+}: // key,
+{
   children: React.ReactNode;
-  key: string;
+  // key: string;
 }) => (
   <AnimatePresence mode="wait">
     <motion.span
-      key={key}
+      // key={key}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -45,7 +45,8 @@ export default function Footer({ onPageMove, height = 30 }: FooterProps) {
     <footer
       className={cn(
         'flex justify-between items-center p-4 mt-1',
-        ` h-[${height}px]`,
+        // ` h-[${height}px]`,
+        'h-[30px]',
       )}
     >
       <Button variant="ghost" size="icon" onClick={handlePreviousPage}>
@@ -61,7 +62,7 @@ export default function Footer({ onPageMove, height = 30 }: FooterProps) {
         </AnimatedText>
         <BookOpen className="h-5 w-5 text-muted-foreground" />
         <AnimatedText
-          key={`page-${currentLocation.currentPage}-${currentLocation.totalPage}`}
+        // key={`page-${currentLocation.currentPage}-${currentLocation.totalPage}`}
         >
           <span className="text-sm text-muted-foreground">
             {currentLocation.currentPage !== undefined &&
@@ -77,4 +78,3 @@ export default function Footer({ onPageMove, height = 30 }: FooterProps) {
     </footer>
   );
 }
-
