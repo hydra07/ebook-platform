@@ -32,5 +32,7 @@ const fileSchema = new Schema(
   { timestamps: true },
 );
 
-const File = mongoose.models.File || mongoose.model('File', fileSchema);
+const File =
+  //  mongoose.models.File ||
+  mongoose.model('File', fileSchema);
 export default File;

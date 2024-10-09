@@ -66,43 +66,31 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
-      res.status(401).send('Authorization header missing');
-      return null;
+      return res.status(401).json({ message: 'Authorization header missing' });
     }
     const token = authHeader.replace(/^Bearer\s/, '');
     if (!token) {
-      res.status(401).send('Token missing');
-      return null;
+      return res.status(401).json({ message: 'Token missing' });
     }
-    try {
-      const { userId, role } = await verifyToken(token);
-      if (!userId) {
-        res.status(401).send('Invalid userId');
-        return;
-      }
-      console.log(`userId: ${userId},role: ${role}`);
-      // res.setHeader('x-user-id', userId);
-      // res.setHeader('x-user-role', role.join(','));
-      req.userId = userId;
-      req.userRole = role;
-      next();
-    } catch (error) {
-      res.status(401).send('Invalid token');
+
+    const { userId, role } = await verifyToken(token);
+    if (!userId) {
+      return res.status(401).json({ message: 'Invalid userId' });
     }
-    console.log(token);
+
+    console.log(`userId: ${userId}, role: ${role}`);
+    req.userId = userId;
+    req.userRole = role;
     next();
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-    return res.status(404).json({
-      error: error,
-    });
+    console.error('Auth error:', error);
+    res.status(401).json({ message: 'Invalid token' });
   }
 }
 
-async function roleRequire(roles?: string | string[]) {
-  return async function (req: Request, res: Response, next: NextFunction) {
-    await authMiddleware(req, res, async (err) => {
+function roleRequire(roles?: string | string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    authMiddleware(req, res, (err) => {
       if (err) {
         return next(err);
       }
