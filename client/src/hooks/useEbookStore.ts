@@ -72,6 +72,9 @@ interface EbookState {
   highlights: Highlight[];
   setHighlights: (highlights: Highlight[]) => void;
 
+  bookStyle: BookStyle;
+  setBookStyle: (style: BookStyle) => void;
+
   color: Color[];
 }
 
@@ -103,10 +106,10 @@ const initialBookOption: BookOption = {
 
 const initialBookStyle: BookStyle = {
   fontFamily: 'Origin',
-  fontSize: 22,
-  lineHeight: 1.4,
-  marginHorizontal: 13,
-  marginVertical: 7,
+  fontSize: 25,
+  lineHeight: 1.9,
+  marginHorizontal: 10,
+  marginVertical: 8,
 };
 
 const initialColor: Color[] = [
@@ -136,6 +139,7 @@ const useEbookStore = create<EbookState>((set, get) => ({
   bookOption: initialBookOption,
   bookMarks: [],
   highlights: [],
+  bookStyle: initialBookStyle,
   color: initialColor,
 
   setCurrentLocation: (location: Page) =>
@@ -199,6 +203,13 @@ const useEbookStore = create<EbookState>((set, get) => ({
     set(
       produce((state) => {
         state.highlights = highlights;
+      }),
+    ),
+
+  setBookStyle: (style: BookStyle) =>
+    set(
+      produce((state) => {
+        state.bookStyle = style;
       }),
     ),
 }));

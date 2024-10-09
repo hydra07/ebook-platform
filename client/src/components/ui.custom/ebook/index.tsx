@@ -26,14 +26,21 @@ export default function EbookViewer() {
     onLocationChange,
     //   updateBook,
   } = useBookController({ viewerRef });
+
   const {
     theme,
     viewerLayout,
     bookOption,
+    bookStyle,
     onDirection,
     onThemeChange,
     onViewType,
+    onFontSize,
+    onLineHeight,
+    onMarginVertical,
+    onMarginHorizontal,
   } = useBookStyle({ viewerRef });
+
   const { addBookmark, removeBookmark, isBookmarkAdded } = useBookMark({
     viewerRef,
   });
@@ -51,6 +58,7 @@ export default function EbookViewer() {
     viewerRef,
     onLocationChange,
   });
+
   // const [rendition, setRendition] = useState<Rendition | null>(null);
   return (
     <>
@@ -61,7 +69,12 @@ export default function EbookViewer() {
           onDirection,
           onThemeChange,
           onViewType,
+          onFontSize,
+          onLineHeight,
+          onMarginVertical,
+          onMarginHorizontal,
           bookOption,
+
         }}
         bookmark={{
           addBookmark,
@@ -91,6 +104,7 @@ export default function EbookViewer() {
         viewerStyleURL={theme}
         viewerLayout={viewerLayout}
         viewerOption={bookOption}
+        viewerStyle={bookStyle}
         onSelection={onSelection}
         loadingView={<Loading />}
       />
