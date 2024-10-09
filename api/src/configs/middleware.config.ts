@@ -100,15 +100,19 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function roleRequire(role?: string) {
+async function roleRequire(roles?: string | string[]) {
   return async function (req: Request, res: Response, next: NextFunction) {
     await authMiddleware(req, res, async (err) => {
       if (err) {
         return next(err);
       }
 
-      if (role && (!req.userRole || !req.userRole.includes(role))) {
-        return res.status(403).json({ message: 'Insufficient permissions' });
+      if (roles) {
+        const requiredRoles = Array.isArray(roles) ? roles : [roles];
+        const userRoles = req.userRole || [];
+        if (!requiredRoles.some((role) => userRoles.includes(role))) {
+          return res.status(403).json({ message: 'Insufficient permissions' });
+        }
       }
 
       next();
