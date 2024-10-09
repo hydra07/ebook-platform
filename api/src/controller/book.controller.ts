@@ -5,7 +5,7 @@ import Author from '../models/author.model';
 
 export const createBook = async (req: Request, res: Response) => {
   try {
-    const { author, ...bookData } = req.body;
+    const { author, category, ...bookData } = req.body;
 
     // Find or create the author
     let authorDocument = await Author.findOne({ name: author.name });
@@ -113,7 +113,8 @@ export const searchBooks = async (req: Request, res: Response) => {
       $or: [
         { title: { $regex: query, $options: 'i' } },
         { description: { $regex: query, $options: 'i' } },
-        { 'author.name': { $regex: query, $options: 'i' } }
+        { 'author.name': { $regex: query, $options: 'i' } },
+        { 'category.name': { $regex: query, $options: 'i' } }
       ]
     })
     .limit(10)

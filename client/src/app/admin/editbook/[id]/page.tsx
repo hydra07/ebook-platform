@@ -10,7 +10,7 @@ interface Book {
   description: string;
   cover: string;
   status: string;
-  url: string;
+  bookUrl: string;
 }
 
 export default function EditBook({ params }: { params: { id: string } }) {
@@ -21,7 +21,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
     description: '',
     cover: '',
     status: '',
-    url: '',
+    bookUrl: '',
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -132,9 +132,9 @@ export default function EditBook({ params }: { params: { id: string } }) {
             <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">Book URL</label>
             <input
               type="url"
-              id="url"
-              name="url"
-              value={book.url}
+              id="bookUrl"
+              name="bookUrl"
+              value={book.bookUrl}
               onChange={handleChange}
               required
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
