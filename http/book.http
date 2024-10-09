@@ -1,0 +1,44 @@
+### Get all books
+GET http://localhost:5000/api/books
+
+### Search books
+GET http://localhost:5000/api/books/search?query=example
+
+### Get a book by ID
+GET http://localhost:5000/api/books/1
+
+### Create a new book (Admin-only)
+POST http://localhost:5000/api/books
+Content-Type: application/json
+
+{
+  "title": "New Book",
+  "author": "Author Name",
+  "publishedDate": "2023-01-01",
+  "isbn": "123-4567890123"
+}
+
+### Update a book by ID (Admin-only)
+PUT http://localhost:5000/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Updated Book Title### Get all books
+GET http://localhost:5000/api/books
+
+### Search books
+GET http://localhost:5000/api/books/search?query=example
+
+### Get a book by ID
+GET http://localhost:5000/api/books/1
+
+### Create a new book (Admin-only)
+POST http://localhost:5000/api/books
+Content-Type: application/json
+
+{
+  "title": "New Book",
+  "author": "Author Name",
+  "publishedDate": "2023-01-01",
+  "isbn": "123-4567890123"
+}

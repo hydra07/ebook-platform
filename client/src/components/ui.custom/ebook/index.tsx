@@ -6,13 +6,15 @@ import { ReactEpubViewer as ReactViewer } from 'react-epub-viewer';
 import 'regenerator-runtime/runtime';
 // import ReactViewer from '@/modules/Reader';
 import useBookMark from '@/hooks/ebook/useBookmark';
+import useSelection from '@/hooks/ebook/useSelection';
+import Context from './context';
 import Footer from './footer';
 import Header from './header';
 import Loading from './loading';
 // import {Rendition} from "epubjs";
 export default function EbookViewer() {
   const [url, setUrl] = useState<string>(
-    'Cú Sốc Tương Lai - Alvin Toffler.epub',
+    'https://res.cloudinary.com/dws8h9utn/raw/upload/v1728325552/Cu%C3%8C%C2%81%20So%C3%8C%C2%82%C3%8C%C2%81c%20Tu%C3%8C%C2%9Bo%C3%8C%C2%9Bng%20Lai%20-%20Alvin%20Toffler.epub',
   );
   const viewerRef = useRef<any>(null);
   const {
@@ -24,17 +26,39 @@ export default function EbookViewer() {
     onLocationChange,
     //   updateBook,
   } = useBookController({ viewerRef });
+
   const {
     theme,
     viewerLayout,
     bookOption,
+    bookStyle,
     onDirection,
     onThemeChange,
     onViewType,
+    onFontSize,
+    onLineHeight,
+    onMarginVertical,
+    onMarginHorizontal,
   } = useBookStyle({ viewerRef });
+
   const { addBookmark, removeBookmark, isBookmarkAdded } = useBookMark({
     viewerRef,
   });
+
+  const {
+    selection,
+    setOpen,
+    open,
+    onSelection,
+    onHighlight,
+    onRemoveHighlight,
+    goToHighLight,
+    onHighlightClick,
+  } = useSelection({
+    viewerRef,
+    onLocationChange,
+  });
+
   // const [rendition, setRendition] = useState<Rendition | null>(null);
   return (
     <>
@@ -45,13 +69,32 @@ export default function EbookViewer() {
           onDirection,
           onThemeChange,
           onViewType,
+          onFontSize,
+          onLineHeight,
+          onMarginVertical,
+          onMarginHorizontal,
           bookOption,
+
         }}
         bookmark={{
           addBookmark,
           removeBookmark,
           isBookmarkAdded,
         }}
+        hightlight={{
+          onSelection,
+          onHighlight,
+          onRemoveHighlight,
+          goToHighLight,
+          onHighlightClick,
+        }}
+      />
+      <Context
+        selection={selection}
+        onRemoveHighlight={onRemoveHighlight}
+        isOpen={open}
+        setIsOpen={setOpen}
+        onHighlight={onHighlight}
       />
       <ReactViewer
         url={url}
@@ -61,6 +104,8 @@ export default function EbookViewer() {
         viewerStyleURL={theme}
         viewerLayout={viewerLayout}
         viewerOption={bookOption}
+        viewerStyle={bookStyle}
+        onSelection={onSelection}
         loadingView={<Loading />}
       />
       <Footer

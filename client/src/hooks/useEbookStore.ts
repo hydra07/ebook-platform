@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 // Interfaces and types (unchanged)
-interface Highlight {
+export interface Highlight {
   key: number;
   cfiRange: string;
   content: string;
@@ -45,7 +45,7 @@ interface ViewerLayout {
   VIEWER_SIDEMENU_WIDTH: number;
 }
 
-interface Color {
+export interface Color {
   name: string;
   code: string;
 }
@@ -68,6 +68,14 @@ interface EbookState {
 
   bookMarks: any[];
   setBookMarks: (bookmark: any[]) => void;
+
+  highlights: Highlight[];
+  setHighlights: (highlights: Highlight[]) => void;
+
+  bookStyle: BookStyle;
+  setBookStyle: (style: BookStyle) => void;
+
+  color: Color[];
 }
 
 // Initial state values (unchanged)
@@ -98,10 +106,10 @@ const initialBookOption: BookOption = {
 
 const initialBookStyle: BookStyle = {
   fontFamily: 'Origin',
-  fontSize: 22,
-  lineHeight: 1.4,
-  marginHorizontal: 13,
-  marginVertical: 7,
+  fontSize: 25,
+  lineHeight: 1.9,
+  marginHorizontal: 10,
+  marginVertical: 8,
 };
 
 const initialColor: Color[] = [
@@ -115,12 +123,12 @@ const initialColor: Color[] = [
 const initialViewerLayout: ViewerLayout = {
   MIN_VIEWER_WIDTH: 600,
   MIN_VIEWER_HEIGHT: 300,
-  VIEWER_HEADER_HEIGHT: 35,
-  VIEWER_FOOTER_HEIGHT: 35,
+  VIEWER_HEADER_HEIGHT: 40,
+  VIEWER_FOOTER_HEIGHT: 40,
   VIEWER_SIDEMENU_WIDTH: 0,
 };
 
-const initialTheme: string = '/themes/light.theme.css';
+const initialTheme: string = '/themes/dark.theme.css';
 
 // Zustand store
 const useEbookStore = create<EbookState>((set, get) => ({
@@ -130,6 +138,9 @@ const useEbookStore = create<EbookState>((set, get) => ({
   theme: initialTheme,
   bookOption: initialBookOption,
   bookMarks: [],
+  highlights: [],
+  bookStyle: initialBookStyle,
+  color: initialColor,
 
   setCurrentLocation: (location: Page) =>
     set(
@@ -185,6 +196,20 @@ const useEbookStore = create<EbookState>((set, get) => ({
     set(
       produce((state) => {
         state.bookMarks = bookmarks;
+      }),
+    ),
+
+  setHighlights: (highlights: Highlight[]) =>
+    set(
+      produce((state) => {
+        state.highlights = highlights;
+      }),
+    ),
+
+  setBookStyle: (style: BookStyle) =>
+    set(
+      produce((state) => {
+        state.bookStyle = style;
       }),
     ),
 }));
