@@ -6,6 +6,9 @@
 //   userRole?: string[];
 // }
 
+import { NextFunction, Request, Response } from 'express';
+import { verifyToken } from '../services/auth.service';
+// interface RequestWithAuth extends Request
 // async function authMiddleware(
 //   req: AuthenticatedRequest,
 //   res: Response,
@@ -58,3 +61,60 @@
 //   }
 
 // }
+
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      res.status(401).send('Authorization header missing');
+      return null;
+    }
+    const token = authHeader.replace(/^Bearer\s/, '');
+    if (!token) {
+      res.status(401).send('Token missing');
+      return null;
+    }
+    try {
+      const { userId, role } = await verifyToken(token);
+      if (!userId) {
+        res.status(401).send('Invalid userId');
+        return;
+      }
+      console.log(`userId: ${userId},role: ${role}`);
+      // res.setHeader('x-user-id', userId);
+      // res.setHeader('x-user-role', role.join(','));
+      req.userId = userId;
+      req.userRole = role;
+      next();
+    } catch (error) {
+      res.status(401).send('Invalid token');
+    }
+    console.log(token);
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+    return res.status(404).json({
+      error: error,
+    });
+  }
+}
+
+async function roleRequire(role?: string) {
+  return async function (req: Request, res: Response, next: NextFunction) {
+    await authMiddleware(req, res, async (err) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (role && (!req.userRole || !req.userRole.includes(role))) {
+        return res.status(403).json({ message: 'Insufficient permissions' });
+      }
+
+      next();
+    });
+  };
+}
+
+export { authMiddleware };
+export default roleRequire;

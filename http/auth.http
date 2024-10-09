@@ -13,6 +13,12 @@ Content-Type: application/json
 
 
 
+### test middleware 
+GET http://localhost:5000/api/auth/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDNmYzZiMzhjMzg0MGI5N2M5ZDI5YiIsInJvbGUiOlsidXNlciIsImFkbWluIl0sImlhdCI6MTcyODQ4Njk5NSwiZXhwIjoxNzI4NDk0MTk1fQ.NZCFLOjBKoSM2n8PGa-EwP2oIGsaQBpBFKCven1GqPs
+
+
+
 
 ### test token
 POST http://localhost:5000/api/auth/token
