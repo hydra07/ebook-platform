@@ -1,5 +1,6 @@
 import type { Router } from 'express';
-import authRouter from '../routers/auth.router';
+import authRouter from '../routers/auth.router'
+import bookRouter from '../routers/book.router';
 import fileRouter from '../routers/file.router';
 interface IRouterConfig {
   path: string;
@@ -15,6 +16,10 @@ export default [
   {
     path: '/api/auth',
     router: authRouter,
+  },
+  {
+    path: '/api/books',
+    router: bookRouter,
   },
   {
     path: '/api/upload',
