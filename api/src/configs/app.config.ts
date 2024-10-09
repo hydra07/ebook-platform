@@ -1,14 +1,14 @@
-// import { env } from 'bun';
 import Cookieparser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import path from 'path';
 import routers from './router.config';
+import { env } from 'bun';
 import bookRouter from '../routers/book.router';
 const app = express();
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
   }),
 );

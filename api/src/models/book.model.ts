@@ -11,6 +11,7 @@ interface IBook extends Document {
   lastUpdateAt: Date;
   bookUrl: string;
   author: Types.ObjectId;
+  category: Types.ObjectId;
 }
 
 // Define the Book schema
@@ -55,9 +56,14 @@ const bookSchema = new Schema<IBook>({
     ref: 'Author',
     required: true
   },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true
+  }
 });
 
-bookSchema.index({ title: 'text', description: 'text', 'author.name': 'text'});
+bookSchema.index({ title: 'text', description: 'text', 'author.name': 'text', 'category.name': 'text'});
 // Create the Book model
 const Book = model<IBook>('Book', bookSchema);
 

@@ -94,8 +94,8 @@ export default function CreateBook() {
           </div>
           <div>
             <label htmlFor="cover" className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-            <ImageUploader onUploadSuccess={handleImageUploadSuccess}
-            />
+            {/* <ImageUploader onUploadSuccess={handleImageUploadSuccess}
+            /> */}
           </div>
         </div>
         <div>
