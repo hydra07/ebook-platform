@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import User from '../models/user.model';
+import authenticate from '../middlewares/user.middleware';
 
 const router = Router();
 
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', authenticate, async (req: Request, res: Response) => {
     try {
         const userId = req.params.id;
         const updateData = req.body;
