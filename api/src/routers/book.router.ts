@@ -1,5 +1,4 @@
 import express from 'express';
-import { adminAuthMiddleware } from '../middlewares/admin.middleware';
 import {
   createBook,
   getAllBooks,

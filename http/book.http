@@ -12,18 +12,30 @@ POST http://localhost:5000/api/books
 Content-Type: application/json
 
 {
-  "title": "New Book",
-  "author": "Author Name",
-  "publishedDate": "2023-01-01",
-  "isbn": "123-4567890123"
+  "title": "New Book Title",
+  "description": "A brief description of the book.",
+  "cover": "https://example.com/book-cover.jpg",
+  "status": "ONGOING",
+  "bookUrl": "https://example.com/new-book",
+  "author": {
+    "name": "Author Name",
+    "description": "Author's biography or description."
+  },
+  "category": {
+    "name": "Category Name"
+  }
 }
 
 ### Update a book by ID (Admin-only)
 PUT http://localhost:5000/api/books/1
 Content-Type: application/json
-
 {
-  "title": "Updated Book Title### Get all books
+  "title": "Updated Book Title",
+  "description": "Updated description of the book.",
+  "cover": "https://example.com/updated-book-cover.jpg",
+  "status": "COMPLETED",
+  "bookUrl": "https://example.com/updated-book-url"
+}
 GET http://localhost:5000/api/books
 
 ### Search books

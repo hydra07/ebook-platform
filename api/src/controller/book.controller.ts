@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Book from '../models/book.model';
 import Author from '../models/author.model';
-
+import Category from '../models/catagory.model';
 
 export const createBook = async (req: Request, res: Response) => {
   try {
@@ -10,14 +10,27 @@ export const createBook = async (req: Request, res: Response) => {
     // Find or create the author
     let authorDocument = await Author.findOne({ name: author.name });
     if (!authorDocument) {
-      authorDocument = new Author(author);
+      authorDocument = new Author({
+        name: author.name,
+        description: author.description // Assuming description is part of the author data
+      });
       await authorDocument.save();
     }
 
-    // Create the book with the author reference
+    // Find or create the category
+    let categoryDocument = await Category.findOne({ name: category.name });
+    if (!categoryDocument) {
+      categoryDocument = new Category({
+        name: category.name
+      });
+      await categoryDocument.save();
+    }
+
+    // Create the book with the author and category references
     const newBook = new Book({
       ...bookData,
-      author: authorDocument._id
+      author: authorDocument._id,
+      category: categoryDocument._id
     });
 
     const savedBook = await newBook.save();
