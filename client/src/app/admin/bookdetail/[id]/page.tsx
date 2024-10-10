@@ -1,126 +1,186 @@
 'use client'
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import { BookOpen, Calendar, Eye, Globe, PenTool, Clock, Star } from 'lucide-react';
+
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import Link from 'next/link'
+import { BookOpen, Calendar, Eye, Globe, PenTool, Clock, Star, ArrowLeft } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface Author {
-  _id?: string;
-  name: string;
-  description?: string;
+  _id?: string
+  name: string
+  description?: string
 }
 
 interface Book {
-  _id: string;
-  title: string;
-  description: string;
-  cover: string;
-  views: number;
-  status: string;
-  createdAt: string;
-  lastUpdateAt: string;
-  url: string;
-  author: Author | string;
-  rating?: number;
-  genre?: string;
+  _id: string
+  title: string
+  description: string
+  cover: string
+  views: number
+  status: string
+  createdAt: string
+  lastUpdateAt: string
+  bookUrl: string
+  author: Author | string
+  rating?: number
+  genre?: string
 }
 
 export default function BookDetail({ params }: { params: { id: string } }) {
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [book, setBook] = useState<Book | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/books/${params.id}`);
-        setBook(response.data);
-        setLoading(false);
+        const response = await axios.get(`http://localhost:5000/api/books/${params.id}`)
+        setBook(response.data)
+        setLoading(false)
       } catch (err) {
-        console.error('Error fetching book:', err);
-        setError('Error fetching book details');
-        setLoading(false);
+        console.error('Error fetching book:', err)
+        setError('Error fetching book details')
+        setLoading(false)
       }
-    };
+    }
 
-    fetchBook();
-  }, [params.id]);
-
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
-  if (!book) return <div className="text-center mt-10">Book not found</div>;
+    fetchBook()
+  }, [params.id])
 
   const getAuthorInfo = () => {
-    if (typeof book.author === 'string') {
-      return { name: 'Unknown', description: 'No description available' };
+    if (typeof book?.author === 'string') {
+      return { name: 'Unknown', description: 'No description available' }
     }
-    return book.author as Author;
-  };
+    return book?.author as Author
+  }
 
-  const authorInfo = getAuthorInfo();
+  const authorInfo = getAuthorInfo()
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6 space-y-8">
+        <Card>
+          <CardHeader className="space-y-4">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-8 w-3/4" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="container mx-auto p-6 mt-10">
+        <CardHeader>
+          <CardTitle className="text-red-500">Error</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>{error}</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!book) {
+    return (
+      <Card className="container mx-auto p-6 mt-10">
+        <CardHeader>
+          <CardTitle>Not Found</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Book not found</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto p-6">
-        <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+    <div className="container mx-auto p-6 space-y-8">
+      <Card>
+        <CardContent className="p-0">
           <div className="md:flex">
-            <div className="md:flex-shrink-0">
-              <img className="h-96 w-full object-cover md:w-96" src={book.cover} alt={book.title} />
+            <div className="md:w-1/3">
+              <img className="h-96 w-full object-cover" src={book.cover} alt={book.title} />
             </div>
-            <div className="p-8">
-              <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{book.genre || 'Fiction'}</div>
-              <h1 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">{book.title}</h1>
-              <p className="mt-2 text-xl text-gray-500">by {authorInfo.name}</p>
-              <div className="mt-4 flex items-center">
+            <div className="p-8 md:w-2/3">
+              <Badge variant="secondary" className="mb-2">{book.genre || 'Fiction'}</Badge>
+              <CardTitle className="text-3xl font-bold mb-2">{book.title}</CardTitle>
+              <CardDescription className="text-xl mb-4">by {authorInfo.name}</CardDescription>
+              <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className={`h-5 w-5 ${i < (book.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" />
                 ))}
-                <span className="ml-2 text-gray-600">{book.rating || 'Not rated'}</span>
+                <span className="ml-2 text-sm text-muted-foreground">{book.rating || 'Not rated'}</span>
               </div>
-              <p className="mt-4 text-gray-500">{book.description}</p>
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <InfoItem icon={<BookOpen className="w-5 h-5" />} label="Status" value={book.status} />
-                <InfoItem icon={<Eye className="w-5 h-5" />} label="Views" value={book.views.toString()} />
-                <InfoItem icon={<Calendar className="w-5 h-5" />} label="Published" value={new Date(book.createdAt).toLocaleDateString()} />
-                <InfoItem icon={<Clock className="w-5 h-5" />} label="Updated" value={new Date(book.lastUpdateAt).toLocaleDateString()} />
+              <p className="text-muted-foreground mb-6">{book.description}</p>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <InfoItem icon={<BookOpen className="w-4 h-4" />} label="Status" value={book.status} />
+                <InfoItem icon={<Eye className="w-4 h-4" />} label="Views" value={book.views.toString()} />
+                <InfoItem icon={<Calendar className="w-4 h-4" />} label="Published" value={new Date(book.createdAt).toLocaleDateString()} />
+                <InfoItem icon={<Clock className="w-4 h-4" />} label="Updated" value={new Date(book.lastUpdateAt).toLocaleDateString()} />
               </div>
-              <div className="mt-6">
-                <a href={book.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  <Globe className="w-5 h-5 mr-2" />
+              <Button asChild>
+                <a href={book.bookUrl} target="_blank" rel="noopener noreferrer">
+                  <Globe className="w-4 h-4 mr-2" />
                   Read Book
                 </a>
-              </div>
+              </Button>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="px-6 py-4">
-            <h2 className="text-2xl font-bold text-gray-800">About the Author</h2>
-            <p className="mt-2 text-gray-600">{authorInfo.description || 'No description available'}</p>
+      <Card>
+        <CardHeader>
+          <CardTitle>About the Author</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-start space-x-4">
+          <Avatar className="w-16 h-16">
+            <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${authorInfo.name}`} />
+            <AvatarFallback>{authorInfo.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h3 className="text-lg font-semibold">{authorInfo.name}</h3>
+            <p className="text-muted-foreground">{authorInfo.description || 'No description available'}</p>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="mt-6 flex justify-between">
-          <Link href={`/admin/editbook/${book._id}`} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <PenTool className="w-5 h-5 mr-2" />
+      <CardFooter className="flex justify-between p-0">
+        <Button asChild variant="outline">
+          <Link href={`/admin/editbook/${book._id}`}>
+            <PenTool className="w-4 h-4 mr-2" />
             Edit Book
           </Link>
-          <Link href="/admin/listbook" className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        </Button>
+        <Button asChild variant="secondary">
+          <Link href="/admin/listbook">
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to List
           </Link>
-        </div>
-      </div>
+        </Button>
+      </CardFooter>
     </div>
-  );
+  )
 }
 
 function InfoItem({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) {
   return (
-    <div className="flex items-center text-gray-600">
+    <div className="flex items-center text-sm">
       {icon}
-      <span className="ml-2 font-semibold">{label}:</span>
-      <span className="ml-1">{value}</span>
+      <span className="ml-2 font-medium">{label}:</span>
+      <span className="ml-1 text-muted-foreground">{value}</span>
     </div>
-  );
+  )
 }

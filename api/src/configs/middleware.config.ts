@@ -6,6 +6,9 @@
 //   userRole?: string[];
 // }
 
+import { NextFunction, Request, Response } from 'express';
+import { verifyToken } from '../services/auth.service';
+// interface RequestWithAuth extends Request
 // async function authMiddleware(
 //   req: AuthenticatedRequest,
 //   res: Response,
@@ -58,3 +61,52 @@
 //   }
 
 // }
+
+async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Authorization header missing' });
+    }
+    const token = authHeader.replace(/^Bearer\s/, '');
+    if (!token) {
+      return res.status(401).json({ message: 'Token missing' });
+    }
+
+    const { userId, role } = await verifyToken(token);
+    if (!userId) {
+      return res.status(401).json({ message: 'Invalid userId' });
+    }
+
+    console.log(`userId: ${userId}, role: ${role}`);
+    req.userId = userId;
+    req.userRole = role;
+    next();
+  } catch (error) {
+    console.error('Auth error:', error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+function roleRequire(roles?: string | string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    authMiddleware(req, res, (err) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (roles) {
+        const requiredRoles = Array.isArray(roles) ? roles : [roles];
+        const userRoles = req.userRole || [];
+        if (!requiredRoles.some((role) => userRoles.includes(role))) {
+          return res.status(403).json({ message: 'Insufficient permissions' });
+        }
+      }
+
+      next();
+    });
+  };
+}
+
+export { authMiddleware };
+export default roleRequire;

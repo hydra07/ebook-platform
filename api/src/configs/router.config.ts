@@ -1,8 +1,8 @@
-import type { Router } from 'express';
-import authRouter from '../routers/auth.router';
-import fileRouter from '../routers/file.router';
-import userRouter from '../routers/user.router';
-
+import type { Router } from "express";
+import authRouter from "../routers/auth.router";
+import fileRouter from "../routers/file.router";
+import bookRouter from "../routers/book.router";
+import settingRouter from "../routers/setting.router";
 interface IRouterConfig {
   path: string;
   router: Router;
@@ -15,15 +15,19 @@ export default [
   //   },
   // },
   {
-    path: '/api/auth',
+    path: "/api/auth",
     router: authRouter,
   },
   {
-    path: '/api/upload',
+    path: "/api/books",
+    router: bookRouter,
+  },
+  {
+    path: "/api/upload",
     router: fileRouter,
   },
   {
-    path: '/api/users', // Add the path for user routes
-    router: userRouter,
+    path: "/api/ebook",
+    router: settingRouter,
   },
 ] as IRouterConfig[];
