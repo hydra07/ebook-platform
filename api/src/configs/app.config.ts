@@ -1,10 +1,10 @@
 import Cookieparser from 'cookie-parser';
 import cors from 'cors';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+import createHttpError, { isHttpError } from 'http-errors';
 import path from 'path';
+import env from '../utils/validateEnv.util';
 import routers from './router.config';
-import { env } from 'bun';
-import bookRouter from '../routers/book.router';
 const app = express();
 app.use(
   cors({
@@ -19,8 +19,10 @@ app.use('/uploads', express.static(path.join(__dirname, '../../../uploads')));
 app.use('/api/hello', (req, res) => {
   res.send('Hello World');
 });
+
 routers.forEach(({ path, router }) => {
   app.use(path, router);
 });
+
 
 export default app;
