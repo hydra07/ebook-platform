@@ -2,7 +2,10 @@ import type { Router } from 'express';
 import authRouter from '../routers/auth.router'
 import bookRouter from '../routers/book.router';
 import fileRouter from '../routers/file.router';
+
 import settingRouter from '../routers/setting.router';
+=======
+
 interface IRouterConfig {
   path: string;
   router: Router;
@@ -27,7 +30,9 @@ export default [
     router: fileRouter,
   },
   {
+
     path: '/api/ebook',
     router: settingRouter,
+
   },
 ] as IRouterConfig[];
