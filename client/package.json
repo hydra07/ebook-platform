@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -41,6 +42,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.9",
     "react-epub-viewer": "^0.2.0",
+    "react-hook-form": "^7.53.0",
     "react-toastify": "^10.0.5",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
