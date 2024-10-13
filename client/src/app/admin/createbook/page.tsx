@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ImageUploader } from '@/components/image-upload';
 import { env } from '@/lib/validateEnv';
+import useFileUpload from '@/hooks/useFileUpload';
 export default function CreateBook() {
   const router = useRouter();
   const [book, setBook] = useState({
@@ -19,8 +20,12 @@ export default function CreateBook() {
     }
   });
 
+  const { uploadedFiles, filesToUpload, isUploading, addFilesToUpload, removeFileToUpload, onUploadFiles, clearUploadedFiles } = useFileUpload();
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
     if (name.startsWith('author.')) {
       const authorField = name.split('.')[1];
       setBook(prevBook => ({
@@ -39,35 +44,38 @@ export default function CreateBook() {
     const { name, files } = e.target;
     if (files && files.length > 0) {
       const file = files[0];
-      setBook(prevBook => ({ ...prevBook, [name]: file }));
+      addFilesToUpload([file]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', book.title);
-    formData.append('description', book.description);
-    formData.append('status', book.status);
-    formData.append('authorName', book.author.name);
-    formData.append('authorDescription', book.author.description);
-    if (book.cover) {
-      formData.append('cover', book.cover);
-    }
-    if (book.bookUrl) {
-      formData.append('bookUrl', book.bookUrl);
-    }
+    console.log(filesToUpload);
+    await onUploadFiles();
+    console.log(uploadedFiles , 'uploadedFiles');
+    // const formData = new FormData();
+    // formData.append('title', book.title);
+    // formData.append('description', book.description);
+    // formData.append('status', book.status);
+    // formData.append('authorName', book.author.name);
+    // formData.append('authorDescription', book.author.description);
+    // if (book.cover) {
+    //   formData.append('cover', book.cover);
+    // }
+    // if (book.bookUrl) {
+    //   formData.append('bookUrl', book.bookUrl);
+    // }
 
-    try {
-      await axios.post('http://localhost:5000/api/books', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      router.push('/admin/listbook');
-    } catch (error) {
-      console.error('Error creating book:', error);
-    }
+    // try {
+    //   await axios.post('http://localhost:5000/api/books', formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data'
+    //     }
+    //   });
+    //   router.push('/admin/listbook');
+    // } catch (error) {
+    //   console.error('Error creating book:', error);
+    // }
   };
 
     const handleImageUploadSuccess = (url: string) => {
