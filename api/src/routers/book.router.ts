@@ -10,6 +10,8 @@ import {
 } from '../controller/book.controller';
 
 const router = express.Router();
+import commentRouter from './comment.router';
+import ratingRouter from "./rating.router.ts" ;
 
 // Public routes
 router.get('/', getAllBooks);
@@ -20,5 +22,8 @@ router.get('/:id', getBookById);
 router.post('/', createBook);
 router.put('/:id', updateBook);
 router.delete('/:id', deleteBook);
+
+router.use('/:bookId/comments', commentRouter);
+router.use('/:bookId/ratings', ratingRouter);
 
 export default router;

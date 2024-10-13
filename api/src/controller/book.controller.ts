@@ -39,10 +39,14 @@ export const getAllBooks = async (req: Request, res: Response) => {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const skip = (page - 1) * limit;
-  
+
       const books = await Book.find()
-        .skip(skip)
-        .limit(limit);
+          .skip(skip)
+          .limit(limit)
+          .populate({
+            path: 'comments',
+            populate: { path: 'userId', select: 'username' }
+          });
   
       const totalBooks = await Book.countDocuments();
       const totalPages = Math.ceil(totalBooks / limit);
@@ -60,7 +64,12 @@ export const getAllBooks = async (req: Request, res: Response) => {
 
   export const getBookById = async (req: Request, res: Response) => {
     try {
-      const book = await Book.findById(req.params.id).populate('author');
+      const book = await Book.findById(req.params.id)
+          .populate('author')
+          .populate({
+            path: 'comments',
+            populate: { path: 'userId', select: 'username' }
+          });
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
       }

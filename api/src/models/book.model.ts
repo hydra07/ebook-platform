@@ -12,6 +12,8 @@ interface IBook extends Document {
   bookUrl: string;
   author: Types.ObjectId;
   category: Types.ObjectId;
+  comments: Types.ObjectId[];
+  rating: number;
 }
 
 // Define the Book schema
@@ -60,7 +62,18 @@ const bookSchema = new Schema<IBook>({
     type: Schema.Types.ObjectId,
     ref: 'Category',
     required: true
-  }
+  },
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
+  rating: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 5,
+    default: 0,
+  },
 });
 
 bookSchema.index({ title: 'text', description: 'text', 'author.name': 'text', 'category.name': 'text'});
