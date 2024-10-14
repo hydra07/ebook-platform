@@ -45,33 +45,33 @@ commentRouter.post('/user/:userId', async (req: Request, res: Response) => {
     }
 });
 // POST reply to a comment
-commentRouter.post('/:commentId/user/:userId', authMiddleware, async (req: Request, res: Response) => {
-    try {
-        const { bookId, commentId, userId } = req.params;
-        const { text } = req.body;
-
-        const parentComment = await Comment.findById(commentId);
-        if (!parentComment) {
-            return res.status(404).json({ error: 'Parent comment not found' });
-        }
-
-        const newComment = new Comment({
-            userId,
-            bookId,
-            text,
-            parentComment: commentId,
-        });
-
-        const savedComment = await newComment.save();
-
-        // Update the book's comments array
-        await Book.findByIdAndUpdate(bookId, { $push: { comments: savedComment._id } });
-
-        res.status(201).json(savedComment);
-    } catch (error) {
-        console.error('Error replying to comment:', error);
-        res.status(500).json({ error: 'Error replying to comment' });
-    }
-});
+// commentRouter.post('/:commentId/user/:userId', authMiddleware, async (req: Request, res: Response) => {
+//     try {
+//         const { bookId, commentId, userId } = req.params;
+//         const { text } = req.body;
+//
+//         const parentComment = await Comment.findById(commentId);
+//         if (!parentComment) {
+//             return res.status(404).json({ error: 'Parent comment not found' });
+//         }
+//
+//         const newComment = new Comment({
+//             userId,
+//             bookId,
+//             text,
+//             parentComment: commentId,
+//         });
+//
+//         const savedComment = await newComment.save();
+//
+//         // Update the book's comments array
+//         await Book.findByIdAndUpdate(bookId, { $push: { comments: savedComment._id } });
+//
+//         res.status(201).json(savedComment);
+//     } catch (error) {
+//         console.error('Error replying to comment:', error);
+//         res.status(500).json({ error: 'Error replying to comment' });
+//     }
+// });
 
 export default commentRouter;
