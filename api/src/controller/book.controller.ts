@@ -1,23 +1,48 @@
 import { Request, Response } from 'express';
 import Book from '../models/book.model';
 import Author from '../models/author.model';
-
+import Category from '../models/catagory.model'
 
 export const createBook = async (req: Request, res: Response) => {
   try {
-    const { author, category, ...bookData } = req.body;
+    // const {  ...bookData } = req.body;
+    const bookData = req.body
+    console.log('Received request body:', req.body);
+
+  
+    // Validate input
+    // if (!author || typeof author !== 'object' || !author.name) {
+    //   return res.status(400).json({ message: 'Invalid author data. Author object with name is required.' });
+    // }
+
+    // if (!category || typeof category !== 'object' || !category.name) {
+    //   return res.status(400).json({ message: 'Invalid category data. Category object with name is required.' });
+    // }
 
     // Find or create the author
-    let authorDocument = await Author.findOne({ name: author.name });
+    let authorDocument = await Author.findOne({ name: bookData.author_name });
     if (!authorDocument) {
-      authorDocument = new Author(author);
+      authorDocument = new Author({
+        name: bookData.author_name,
+        description: bookData.author_description || '' // Provide a default value if description is not provided
+      });
       await authorDocument.save();
     }
 
-    // Create the book with the author reference
+    // Find or create the category
+    let categoryDocument = await Category.findOne({ name: bookData.category_name });
+    if (!categoryDocument) {
+      categoryDocument = new Category({
+        name: bookData.category_name
+      });
+      await categoryDocument.save();
+    }
+
+    // Create the book with the author and category references
     const newBook = new Book({
       ...bookData,
-      author: authorDocument._id
+      author: authorDocument._id,
+      category: categoryDocument._id
     });
 
     const savedBook = await newBook.save();
