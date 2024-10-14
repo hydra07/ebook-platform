@@ -1,12 +1,13 @@
 "use client";
 import { useCallback, useState, useRef } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast"
 import { addToCartProductType, useCartStore } from "./use-cart-store";
 
 export const useAddToCart = () => {
     const addToCart = useCartStore((state) => state.addToCart);
     const cart = useCartStore((state) => state.cart);
     const [isAdding, setIsAdding] = useState(false);
+    const { toast } = useToast();
 
     const handleAddToCart = useCallback((quantity: number = 1,product: addToCartProductType)=> {
         if(isAdding) return;
