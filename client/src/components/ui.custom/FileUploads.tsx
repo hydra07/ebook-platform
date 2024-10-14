@@ -77,7 +77,7 @@ const FileUploadDropzone = ({
       if (uploadFiles && uploadFiles.length > 0) {
         const fileUrls = uploadFiles.map((item) => item.url);
         console.log('fileUrls', fileUrls);
-        onFileUploads(uploadFiles);
+        onFileUploads(fileUrls);
         toast.success('Upload files successfully!');
         return fileUrls;
       }
