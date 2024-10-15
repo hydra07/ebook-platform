@@ -1,5 +1,5 @@
-import { Schema, model, Document, Types  } from 'mongoose';
-import Author from './author.model';
+import { Schema, model, Document, Types } from "mongoose";
+import Author from "./author.model";
 // Define an interface for the Book model
 interface IBook extends Document {
   title: string;
@@ -12,6 +12,7 @@ interface IBook extends Document {
   bookUrl: string;
   author: Types.ObjectId;
   category: Types.ObjectId;
+  rating: number;
 }
 
 // Define the Book schema
@@ -35,8 +36,8 @@ const bookSchema = new Schema<IBook>({
   },
   status: {
     type: String,
-    enum: ['ONGOING', 'COMPLETED', 'DISCONTINUED'], // Example status options, adjust as needed
-    default: 'draft',
+    enum: ["ONGOING", "COMPLETED", "DISCONTINUED"], // Example status options, adjust as needed
+    default: "draft",
   },
   createdAt: {
     type: Date,
@@ -53,18 +54,30 @@ const bookSchema = new Schema<IBook>({
   },
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'Author',
-    required: true
+    ref: "Author",
+    required: true,
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
-  }
+    ref: "Category",
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 5,
+    default: 0,
+  },
 });
 
-bookSchema.index({ title: 'text', description: 'text', 'author.name': 'text', 'category.name': 'text'});
+bookSchema.index({
+  title: "text",
+  description: "text",
+  "author.name": "text",
+  "category.name": "text",
+});
 // Create the Book model
-const Book = model<IBook>('Book', bookSchema);
+const Book = model<IBook>("Book", bookSchema);
 
 export default Book;
