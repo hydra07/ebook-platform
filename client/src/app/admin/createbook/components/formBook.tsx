@@ -180,7 +180,15 @@ export default function FormBook() {
               <FormItem>
                 <FormLabel>Status</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter book status" />
+                  <select
+                    {...field}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select status</option>
+                    <option value="ONGOING">Ongoing</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="DISCONTINUED">Discontinued</option>
+                  </select>
                 </FormControl>
                 <FormMessage />
               </FormItem>

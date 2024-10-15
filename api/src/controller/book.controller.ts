@@ -49,6 +49,7 @@ export const createBook = async (req: Request, res: Response) => {
 
     // Populate the author details in the response
     await savedBook.populate('author');
+    await savedBook.populate('category');
 
     res.status(201).json(savedBook);
   } catch (error) {
@@ -85,7 +86,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
 
   export const getBookById = async (req: Request, res: Response) => {
     try {
-      const book = await Book.findById(req.params.id).populate('author');
+      const book = await Book.findById(req.params.id).populate('author').populate('category');
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
       }

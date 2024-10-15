@@ -3,6 +3,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 interface Book {
   _id: string;
@@ -48,6 +57,15 @@ export default function EditBook({ params }: { params: { id: string } }) {
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'cover' | 'bookUrl') => {
+    const { files } = e.target;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const fileUrl = URL.createObjectURL(file); // Create a URL for the uploaded file
+      setBook((prevBook) => ({ ...prevBook, [field]: fileUrl })); // Update the state with the file URL
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -89,16 +107,16 @@ export default function EditBook({ params }: { params: { id: string } }) {
             />
           </div>
           <div>
-            <label htmlFor="cover" className="block text-sm font-medium text-gray-700 mb-1">Cover URL</label>
+            <label htmlFor="cover" className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
             <input
-              type="url"
+              type="file"
               id="cover"
               name="cover"
-              value={book.cover}
-              onChange={handleChange}
-              required
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, 'cover')}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
+            {book.cover && <img src={book.cover} alt="Cover Preview" className="mt-2 w-full h-auto" />}
           </div>
         </div>
         <div>
@@ -129,16 +147,16 @@ export default function EditBook({ params }: { params: { id: string } }) {
             </select>
           </div>
           <div>
-            <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">Book URL</label>
+            <label htmlFor="bookUrl" className="block text-sm font-medium text-gray-700 mb-1">Book URL (File)</label>
             <input
-              type="url"
+              type="file"
               id="bookUrl"
               name="bookUrl"
-              value={book.bookUrl}
-              onChange={handleChange}
-              required
+              accept=".epub,.pdf"
+              onChange={(e) => handleFileChange(e, 'bookUrl')}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
+            {book.bookUrl && <a href={book.bookUrl} target="_blank" rel="noopener noreferrer" className="mt-2 block text-blue-500">View Book File</a>}
           </div>
         </div>
         <div className="flex justify-between items-center mt-6">

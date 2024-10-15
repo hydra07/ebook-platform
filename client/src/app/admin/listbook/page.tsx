@@ -59,6 +59,20 @@ export default function Component() {
     setIsSearching(true)
   }
 
+  const truncateDescription = (description: string) => {
+    const maxLength = 100; // Set the maximum length for the description
+    return description.length > maxLength ? `${description.substring(0, maxLength)}...` : description;
+  }
+
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
+
+  const toggleDescription = (id: string) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }
+
   return (
     <div className="container mx-auto p-4 space-y-8">
       <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -105,14 +119,28 @@ export default function Component() {
                   <img src={book.cover} alt={book.title} className="w-20 h-27 object-cover" />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">{book.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{book.description}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="break-words max-w-xs overflow-hidden overflow-ellipsis"> {/* Giới hạn chiều rộng và bẻ dòng */}
+                    {expandedDescriptions[book._id] ? (
+                      <>
+                        {book.description}
+         
+                      </>
+                    ) : (
+                      <>
+                        {truncateDescription(book.description)}
+        
+                      </>
+                    )}
+                  </div>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">{book.status}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Link href={`/admin/bookdetail/${book._id}`}>
                     <Button variant="outline" size="sm">View</Button>
                   </Link>
                   <Link href={`/admin/editbook/${book._id}`}>
-                    <Button variant="outline" size="sm">Edit</Button>
+                    <Button variant="default" size="sm">Edit</Button>
                   </Link>
                   <Button variant="destructive" size="sm" onClick={() => handleDelete(book._id)}>Delete</Button>
                 </td>
