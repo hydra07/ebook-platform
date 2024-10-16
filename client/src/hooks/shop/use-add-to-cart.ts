@@ -14,7 +14,7 @@ export const useAddToCart = () => {
 
         setIsAdding(true);
 
-        const cartItem = cart?.find((item) => item.id === product.id);
+        const cartItem = cart?.find((item) => item._id === product._id);
         if(cartItem && cartItem.quantity + quantity > product.currentQuantity){
             toast({
                 title: "Thông báo",

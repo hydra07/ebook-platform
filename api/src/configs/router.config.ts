@@ -4,6 +4,7 @@ import bookRouter from '../routers/book.router';
 import fileRouter from '../routers/file.router';
 import notificationRouter from '../routers/notification.router';
 import settingRouter from '../routers/setting.router';
+import shopRouter from '../routers/shop.router';
 interface IRouterConfig {
   path: string;
   router: Router;
@@ -34,5 +35,9 @@ export default [
   {
     path: '/api/notification',
     router: notificationRouter,
+  },
+  {
+    path: '/api/shop',
+    router: shopRouter,
   },
 ] as IRouterConfig[];

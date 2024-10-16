@@ -3,32 +3,30 @@ import { useEffect, useMemo, useState } from "react";
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import {  ShoppingBasket } from "lucide-react";
-import useFromStore from "@/hooks/use-from-store";
-import { useCartStore } from "@/hooks/use-cart-store";
+import useFromStore from "@/hooks/shop/use-from-store";
+import { useCartStore } from "@/hooks/shop/use-cart-store";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { checkIneficientUseCase } from "@/use-cases/products";
-import useCartCalculations, { useTotalCalculation } from "@/hooks/use-cart-calculation";
+import { checkIneficientUseCase } from "@/app/shop/use-cases";
+import useCartCalculations, { useTotalCalculation } from "@/hooks/shop/use-cart-calculation";
 import CartItemList from "./CartItemList";
 import EmptyCart from "./EmptyCart";
 import InsufficientStockWarning from "./InsufficientStockWarning";
 import { useTransition } from "react";
 import CheckoutButton from "./CheckoutButton";
 import { useRouter } from "next/navigation";
-import CustomList from "./CustomList";
-import { getItemList } from "@/util/util";
+import { getItemList } from "@/utils";
 
 export default function Cart() {
   // const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [insufficientList, setInsufficientList] = useState<number[]>([]);
+  const [insufficientList, setInsufficientList] = useState<string[]>([]);
   
   const cart = useFromStore(useCartStore, (state) => state.cart);
-  const customBracelets = useFromStore(useCartStore, (state) => state.customBracelets);
 
   const cartItems = useMemo(() => cart ? getItemList(cart) : [], [cart]);
-  const { total } = useTotalCalculation(cart || [], customBracelets || []);
+  const { total } = useTotalCalculation(cart || []);
 
   useEffect(() => {
     const fetchInefficientItems = async () => {
@@ -45,7 +43,7 @@ export default function Cart() {
 
     fetchInefficientItems();
   }, [cart, cartItems]);
-  const hasItems = (cart && cart.length > 0) || (customBracelets && customBracelets.length > 0);
+  const hasItems = (cart && cart.length > 0);
 
   return (
     <Drawer direction="bottom" open={isOpen} onOpenChange={setIsOpen}>
@@ -56,7 +54,7 @@ export default function Cart() {
         >
           <ShoppingBasket className="h-5 w-5 text-primary-900 dark:text-primary-700" />
           <span className="font-semibold text-primary-900 dark:text-primary-700">
-            ({cartItems.length + (customBracelets?.length || 0)})
+            ({cartItems.length})
           </span>
         </Button>
       </DrawerTrigger>
@@ -73,7 +71,6 @@ export default function Cart() {
           {hasItems ? (
             <>
               <CartItemList cart={cart || []} insufficientList={insufficientList} />
-              <CustomList customBracelets={customBracelets || []} />
             </>
           ) : (
             <EmptyCart setIsOpen={setIsOpen} />

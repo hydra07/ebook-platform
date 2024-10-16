@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/hooks/use-cart-store";
-import { ProductType } from "@/hooks/use-cart-store";
+import { useCartStore } from "@/hooks/shop/use-cart-store";
+import { ProductType } from "@/hooks/shop/use-cart-store";
 import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Alert } from "@/components/Alert";
 import Image from "next/image";
 import { useTransition } from "react";
-import { getProductByIdUseCase } from "@/use-cases/products";
+import { getProductByIdUseCase } from "@/app/shop/use-cases";
 
 interface Props {
   item: ProductType;
@@ -41,7 +41,7 @@ export default function CartItem({ item }: Props) {
 
     if (change === 1) {
       try {
-        const product = await getProductByIdUseCase(item.id);
+        const product = await getProductByIdUseCase(item._id);
         if (item.quantity + change > product?.currentQuantity!) {
           setErrorMessage("Quantity exceeds available stock!");
           setTimeout(() => setErrorMessage(null), 3000);
@@ -61,20 +61,20 @@ export default function CartItem({ item }: Props) {
   return (
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
       <Image
-        alt={item.name}
-        src={item.imgProducts?.[0]?.imageUrl ?? imgNotFoundUrl}
+        alt={item.title}
+        src={item.cover}
         width={64}
         height={64}
         className="rounded-md object-cover"
       />
       <div className="grid gap-1">
-        <h4 className="font-medium">{item.name}</h4>
+        <h4 className="font-medium">{item.title}</h4>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {
             new Intl.NumberFormat("vi", {
               style: "currency",
               currency: "VND",
-            }).format(item.salePrice)
+            }).format(item.price)
           }
         </p>
       </div>

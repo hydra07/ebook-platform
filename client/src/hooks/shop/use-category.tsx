@@ -1,9 +1,10 @@
 "use client";
+import axios from '@/lib/axios';
 import { useState, useEffect } from 'react';
 
 export function useCategories() {
     const [categories, setCategories] = useState<{
-        id: number;
+        _id: string;
         name: string;
     }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -12,13 +13,8 @@ export function useCategories() {
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const response = await fetch('/api/categories',{
-                    next: {
-                        revalidate: 60 * 60,
-                    }
-                });
-                const data = await response.json(); 
-                setCategories(data);
+                const response = await axios.get('/shop/categories');
+                setCategories(response.data);
                 setIsLoading(false);
             } catch (error: any) {
                 setError(error);

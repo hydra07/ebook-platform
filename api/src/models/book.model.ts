@@ -12,6 +12,8 @@ interface IBook extends Document {
   bookUrl: string;
   author: Types.ObjectId;
   category: Types.ObjectId;
+  price: number;
+  currentQuantity: number;
 }
 
 // Define the Book schema
@@ -60,6 +62,15 @@ const bookSchema = new Schema<IBook>({
     type: Schema.Types.ObjectId,
     ref: 'Category',
     required: true
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  currentQuantity: {
+    type: Number,
+    default: 0,
+    required: true,
   }
 });
 

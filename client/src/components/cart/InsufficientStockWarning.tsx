@@ -1,7 +1,7 @@
 import { AlertTriangleIcon } from "lucide-react";
 
 interface InsufficientStockWarningProps {
-  insufficientList: number[];
+  insufficientList: string[];
 }
 
 export default function InsufficientStockWarning({ insufficientList }: InsufficientStockWarningProps) {

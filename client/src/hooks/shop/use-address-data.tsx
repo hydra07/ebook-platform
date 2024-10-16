@@ -25,10 +25,9 @@ export const useAddressData = () => {
   const [districts, setDistricts] = useState<DistrictOption[]>([]);
   const [wards, setWards] = useState<WardOption[]>([]);
 
-  // useEffect(() => {
-  //   // fetchProvinces();
-  //   fetchDistricts(203);
-  // }, []);
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
 
   const fetchProvinces = async () => {
     try {
