@@ -21,12 +21,18 @@ async function newSetting(
     marginVertical: 8,
   };
 
-  const setting = new Setting({
+  const updatedData = {
     userId: userId,
     bookOption: { ...defaultBookOption, ...data.bookOption },
     bookStyle: { ...defaultBookStyle, ...data.bookStyle },
+  };
+
+  const setting = await Setting.findOneAndUpdate({ userId }, updatedData, {
+    new: true,
+    upsert: true,
   });
-  return await setting.save();
+
+  return setting;
 }
 
 async function getSetting(

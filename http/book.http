@@ -5,7 +5,7 @@ GET http://localhost:5000/api/books
 GET http://localhost:5000/api/books/search?query=example
 
 ### Get a book by ID
-GET http://localhost:5000/api/books/1
+GET http://localhost:5000/api/books/670c963388ce4da4c956dbf7
 
 ### Create a new book (Admin-only)
 POST http://localhost:5000/api/books

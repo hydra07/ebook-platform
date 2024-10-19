@@ -1,22 +1,36 @@
 'use client';
 import useBookController from '@/hooks/ebook/useBookController';
 import useBookStyle from '@/hooks/ebook/useBookStyle';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ReactEpubViewer as ReactViewer } from 'react-epub-viewer';
 import 'regenerator-runtime/runtime';
 // import ReactViewer from '@/modules/Reader';
 import useBookMark from '@/hooks/ebook/useBookmark';
+import UseInitBook from '@/hooks/ebook/useInitBook';
 import useSelection from '@/hooks/ebook/useSelection';
 import Context from './context';
 import Footer from './footer';
 import Header from './header';
 import Loading from './loading';
+import ReadingContinue from './readingContinue';
 // import {Rendition} from "epubjs";
-export default function EbookViewer() {
-  const [url, setUrl] = useState<string>(
-    'https://res.cloudinary.com/dws8h9utn/raw/upload/v1728325552/Cu%C3%8C%C2%81%20So%C3%8C%C2%82%C3%8C%C2%81c%20Tu%C3%8C%C2%9Bo%C3%8C%C2%9Bng%20Lai%20-%20Alvin%20Toffler.epub',
-  );
+export default function EbookViewer({ book }: { book: any }) {
+  // const [url, setUrl] = useState<string>(
+  //   'https://res.cloudinary.com/dws8h9utn/raw/upload/v1728325552/Cu%C3%8C%C2%81%20So%C3%8C%C2%82%C3%8C%C2%81c%20Tu%C3%8C%C2%9Bo%C3%8C%C2%9Bng%20Lai%20-%20Alvin%20Toffler.epub',
+  // );
+  const [url, setUrl] = useState<string>(book.bookUrl);
   const viewerRef = useRef<any>(null);
+  const [isRead, setIsRead] = useState<boolean>(false);
+  const [isOpenContinue, setIsOpenContinue] = useState<boolean>(false);
+  const { initCurrentLocation } = UseInitBook();
+  useEffect(() => {
+    console.log(initCurrentLocation);
+    if (initCurrentLocation && !isRead) {
+      setIsOpenContinue(true);
+      setIsRead(true);
+    }
+  }, [initCurrentLocation]);
+
   const {
     currentLocation,
     //   isFetching,
@@ -74,7 +88,6 @@ export default function EbookViewer() {
           onMarginVertical,
           onMarginHorizontal,
           bookOption,
-
         }}
         bookmark={{
           addBookmark,
@@ -95,6 +108,12 @@ export default function EbookViewer() {
         isOpen={open}
         setIsOpen={setOpen}
         onHighlight={onHighlight}
+      />
+      <ReadingContinue
+        isOpen={isOpenContinue}
+        setIsOpen={setIsOpenContinue}
+        currentLocation={initCurrentLocation}
+        onLocationChange={onLocationChange}
       />
       <ReactViewer
         url={url}

@@ -3,50 +3,108 @@ import Bookmark from '../models/bookmark.model';
 import Highlight from '../models/highlight.model';
 import Reader from '../models/reader.model';
 
-export async function newReader(userId: string, bookId: string) {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(userId))
-      throw new Error('Invalid userId');
-    if (!mongoose.Types.ObjectId.isValid(bookId))
-      throw new Error('Invalid bookId');
-
-    const existingReader = await Reader.findOne({ userId, bookId });
-    if (existingReader) {
-      throw new Error('Reader already exists for this user and book');
+const validateIds = (...ids: string[]) => {
+  ids.forEach((id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new Error(`Invalid ID: ${id}`);
     }
+  });
+};
 
-    const reader = new Reader({
-      userId,
-      bookId,
-      currentLocation: {},
-      highlights: [],
-      bookmarks: [],
-    });
-    return await reader.save();
-  } catch (error) {
-    console.error('Error in createReader:', error);
-    throw error;
-  }
-}
-
-export async function getReader(userId: string, bookId: string) {
+export async function getOrCreateReader(userId: string, bookId: string) {
   try {
-    if (!mongoose.Types.ObjectId.isValid(userId))
-      throw new Error('Invalid userId');
-    if (!mongoose.Types.ObjectId.isValid(bookId))
-      throw new Error('Invalid bookId');
+    validateIds(userId, bookId);
 
-    const reader = await Reader.findOne({ userId, bookId })
+    let reader = await Reader.findOne({ userId, bookId })
       .populate('highlights')
       .populate('bookmarks');
 
     if (!reader) {
-      throw new Error('Reader not found');
+      reader = new Reader({
+        userId,
+        bookId,
+        currentLocation: {},
+        highlights: [],
+        bookmarks: [],
+      });
+      await reader.save();
     }
 
     return reader;
   } catch (error) {
-    console.error('Error in getReader:', error);
+    console.error('Error in getOrCreateReader:', error);
+    throw error;
+  }
+}
+
+// export async function newReader(userId: string, bookId: string) {
+//   try {
+//     if (!mongoose.Types.ObjectId.isValid(userId))
+//       throw new Error('Invalid userId');
+//     if (!mongoose.Types.ObjectId.isValid(bookId))
+//       throw new Error('Invalid bookId');
+
+//     const existingReader = await Reader.findOne({ userId, bookId });
+//     if (existingReader) {
+//       throw new Error('Reader already exists for this user and book');
+//     }
+
+//     const reader = new Reader({
+//       userId,
+//       bookId,
+//       currentLocation: {},
+//       highlights: [],
+//       bookmarks: [],
+//     });
+//     return await reader.save();
+//   } catch (error) {
+//     console.error('Error in createReader:', error);
+//     throw error;
+//   }
+// }
+
+// export async function getReader(userId: string, bookId: string) {
+//   try {
+//     if (!mongoose.Types.ObjectId.isValid(userId))
+//       throw new Error('Invalid userId');
+//     if (!mongoose.Types.ObjectId.isValid(bookId))
+//       throw new Error('Invalid bookId');
+
+//     const reader = await Reader.findOne({ userId, bookId })
+//       .populate('highlights')
+//       .populate('bookmarks');
+
+//     if (!reader) {
+//       throw new Error('Reader not found');
+//     }
+
+//     return reader;
+//   } catch (error) {
+//     console.error('Error in getReader:', error);
+//     throw error;
+//   }
+// }
+
+export async function reading(
+  userId: string,
+  bookId: string,
+  currentLocation: any,
+) {
+  try {
+    validateIds(userId, bookId);
+    if (!currentLocation || typeof currentLocation !== 'object') {
+      throw new Error('Invalid currentLocation');
+    }
+
+    const updatedReader = await Reader.findOneAndUpdate(
+      { userId, bookId },
+      { currentLocation },
+      { new: true, upsert: true },
+    );
+
+    return updatedReader;
+  } catch (error) {
+    console.error('Error in updateReaderLocation:', error);
     throw error;
   }
 }
