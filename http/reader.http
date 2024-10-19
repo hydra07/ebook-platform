@@ -1,6 +1,6 @@
 ### GET or CREATE a reader
 GET http://localhost:5000/api/reader/670c963388ce4da4c956dbf7
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDdlN2I0MTY5N2YzZTU5M2YyOTYwMCIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MjkzMDg0NDUsImV4cCI6MTcyOTMxNTY0NX0.k2nTNxw7O9MqgsbOq2p9HfP7wXyFyJLhpuYUp8nC_4A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDdlN2I0MTY5N2YzZTU5M2YyOTYwMCIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MjkzMTY0MjksImV4cCI6MTcyOTMyMzYyOX0.QltlKb465dGHZzHVSCXfodRPJKyow-oUu4FOgZVJTXU
 
 ### CREATE or UPDATE a reader
 POST http://localhost:5000/api/reader/670c963388ce4da4c956dbf7

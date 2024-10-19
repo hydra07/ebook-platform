@@ -2,9 +2,9 @@ import '@/app/globals.css';
 import SessionWrapper from '@/components/SessionWrapper';
 import EbookViewer from '@/components/ui.custom/ebook';
 import axios from '@/lib/axios';
+import axiosDefault from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ThemeProvider } from 'next-themes';
-
 export const getStaticPaths: GetStaticPaths = async () => {
   // Fetch all book IDs or a subset of book IDs
   const res = await axios.get('/books');
@@ -23,13 +23,26 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id;
-  const res = await axios.get(`/books/${id}`);
-  const book = await res.data;
+  try {
+    const res = await axios.get(`/books/${id}`);
+    const book = res.data;
 
-  return {
-    props: { book },
-    revalidate: 60, // Optional: revalidate every 60 seconds
-  };
+    return {
+      props: { book },
+      revalidate: 60,
+    };
+  } catch (error) {
+    if (axiosDefault.isAxiosError(error) && error.response?.status === 404) {
+      return {
+        notFound: true, // This will render the 404 page
+      };
+    }
+    // For other errors, you might want to log them and still return a 404
+    console.error('Error fetching book:', error);
+    return {
+      notFound: true,
+    };
+  }
 };
 export default function Ebook({ book }: { book: any }) {
   if (!book) return null;

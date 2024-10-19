@@ -49,7 +49,6 @@ async function getSetting(
 
 async function getAllSetting(): Promise<InstanceType<typeof Setting>[]> {
   const settings = await Setting.find();
-
   return settings;
 }
 

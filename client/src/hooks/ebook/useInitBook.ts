@@ -18,6 +18,9 @@ export default function UseInitBook() {
     bookStyle,
     bookOption,
     currentLocation,
+    bookMarks,
+    setBookMarks,
+    setHighlights,
   } = useEbookStore();
   const { user } = useAuth();
 
@@ -61,7 +64,10 @@ export default function UseInitBook() {
       );
       const result = await res.data;
       setInitCurrentLocation(result.currentLocation);
+      setBookMarks(result.bookmarks);
+      setHighlights(result.highlights);
       setIsReading(true);
+
       console.log('get current location :', res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {

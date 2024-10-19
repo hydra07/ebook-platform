@@ -34,15 +34,58 @@ const readerSchema = new Schema(
     },
     highlights: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Highlight',
+        key: {
+          type: Number,
+        },
+        cfiRange: {
+          type: String,
+        },
+        content: {
+          type: String,
+        },
+        color: {
+          type: String,
+        },
+        chapterName: {
+          type: String,
+        },
+        pageNum: {
+          type: Number,
+        },
+        lastAccess: {
+          type: String,
+        },
       },
+      // {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: 'Highlight',
+      // },
     ],
     bookmarks: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Bookmark',
+        key: {
+          type: Number,
+        },
+        name: {
+          type: String,
+        },
+        cfi: {
+          type: String,
+        },
+        chapter: {
+          type: String,
+        },
+        page: {
+          type: Number,
+        },
+        date: {
+          type: String,
+        },
       },
+      // {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: 'Bookmark',
+      // },
     ],
   },
   { timestamps: true },

@@ -1,11 +1,13 @@
+import { axiosWithAuth } from '@/lib/axios';
 import {
   cfiRangeSpliter,
   compareCfi,
   timeFormatter,
 } from '@/utils/ebook.utils';
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
+import useAuth from '../useAuth';
 import useEbookStore, { Color, Highlight } from '../useEbookStore';
-
 export default function useSelection({ viewerRef, onLocationChange }: any) {
   const {
     currentLocation,
@@ -14,9 +16,39 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
     setHighlights,
     color,
   } = useEbookStore();
-
+  const { user } = useAuth();
   const [selection, setSelection] = useState<Highlight | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+
+  const updateHighlights = async (_highlights: any) => {
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    const data = {
+      highlights: _highlights,
+    };
+    try {
+      const res = await axiosWithAuth(token).post(
+        '/reader/670c963388ce4da4c956dbf7',
+        data,
+      );
+      // console.log('Location update successful:', res.data);
+      const result = await res.data;
+      console.log(result);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error updating bookmark:',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
+
   const onSelection = useCallback(
     (cfiRange: string) => {
       if (!viewerRef.current) return false;
@@ -47,7 +79,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
   );
 
   const onHighlight = useCallback(
-    (color: Color) => {
+    async (color: Color) => {
       if (!viewerRef.current) return;
       if (!selection) return;
       const newSelection = {
@@ -71,8 +103,9 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
       })();
 
       setHighlights(updatedHighlights);
+      await updateHighlights(updatedHighlights);
     },
-    [viewerRef, highlights, selection, setSelection, currentLocation],
+    [viewerRef, highlights, selection, setSelection, currentLocation, user],
   );
 
   const goToHighLight = useCallback(
@@ -85,12 +118,13 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
   );
 
   const onRemoveHighlight = useCallback(
-    (highlight: Highlight) => {
+    async (highlight: Highlight) => {
       if (!viewerRef.current) return;
       const newHighlights = highlights.filter(
         (item) => item.key !== highlight.key,
       );
       setHighlights(newHighlights);
+      await updateHighlights(newHighlights);
       viewerRef.current.offHighlight(highlight.cfiRange);
       setSelection(null);
     },
@@ -142,6 +176,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
     currentLocation,
     onHighlightClick,
     onLocationChange,
+    updateHighlights,
   ]);
 
   return {
