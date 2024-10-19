@@ -6,6 +6,8 @@ import notificationRouter from "../routers/notification.router";
 import ratingRouter from "../routers/rating.router";
 import userRouter from "../routers/user.router";
 import settingRouter from "../routers/setting.router";
+import favouriteRouter from "../routers/favourite.router";
+
 interface IRouterConfig {
   path: string;
   router: Router;
@@ -44,5 +46,9 @@ export default [
   {
     path: "/api/ratings",
     router: ratingRouter,
+  },
+  {
+    path: "/api/favourites",
+    router: favouriteRouter,
   },
 ] as IRouterConfig[];
