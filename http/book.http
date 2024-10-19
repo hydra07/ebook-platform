@@ -43,7 +43,17 @@ Content-Type: application/json
 ### Lấy danh sách sách
 # GET http://localhost:5000/api/book/?authorName=John%20Doe&title=Example&category=Fiction&sortBy=createdAt&sortOrder=asc&skip=0&take=10
 # Accept: application/json
-GET http://localhost:5000/api/book/?title=tương%20lai
+GET http://localhost:5000/api/book/?authorName=John
+
+
+
+
+###GET by id
+GET http://localhost:5000/api/book/6713ce1545b388edab3eaa71
+
+
+####
+GET http://localhost:5000/api/book/category
 
 
 

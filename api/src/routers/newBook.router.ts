@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { getBook, getBookById, newBook } from '../services/book.service';
+import {
+  getAllAuthor,
+  getAllCategories,
+  getBook,
+  getBookById,
+  newBook,
+} from '../services/book.service';
 
 const router = Router();
 router.post('/', async (req, res) => {
@@ -24,6 +30,7 @@ router.get('/', async (req, res) => {
         | 'title'
         | 'createdAt'
         | 'updatedAt'
+        | 'views'
         | undefined,
       sortOrder: req.query.sortOrder as 'asc' | 'desc' | undefined,
     };
@@ -36,6 +43,25 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.get('/category', async (req, res) => {
+  try {
+    const category = await getAllCategories();
+    res.status(200).json(category); // Return the found book
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/author', async (req, res) => {
+  try {
+    const author = await getAllAuthor();
+    res.status(200).json(author);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params; // Get the book ID from the request parameters
@@ -48,4 +74,5 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 export default router;

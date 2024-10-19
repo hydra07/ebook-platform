@@ -5,7 +5,7 @@ interface QueryOptions {
   authorName?: string;
   title?: string;
   category?: string | string[];
-  sortBy?: 'title' | 'createdAt' | 'updatedAt'; // Added sorting fields
+  sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'views'; // Added sorting fields
   sortOrder?: 'asc' | 'desc';
 }
 
@@ -29,7 +29,6 @@ export async function newBook(data: any): Promise<InstanceType<typeof Book>> {
   const savedBook = await book.save();
   return await savedBook;
 }
-
 export async function getBook(
   options: QueryOptions,
   skip?: number,
@@ -82,10 +81,27 @@ export async function getBook(
     total,
   };
 }
-
 export async function getBookById(
   id: string,
 ): Promise<InstanceType<typeof Book> | null> {
   const book = await Book.findById(id).populate('author');
   return book; // Trả về sách tìm thấy hoặc null nếu không tìm thấy
+}
+export async function getAllCategories(): Promise<
+  { category: string; count: number }[]
+> {
+  const categoriesCount = await Book.aggregate([
+    { $unwind: '$category' },
+    { $group: { _id: '$category.name', count: { $sum: 1 } } },
+    { $sort: { count: -1 } }, // Sort by count in descending order
+  ]);
+
+  return categoriesCount.map((cat) => ({
+    category: cat._id,
+    count: cat.count,
+  }));
+}
+export async function getAllAuthor() {
+  const author = await Author.find();
+  return await author;
 }
