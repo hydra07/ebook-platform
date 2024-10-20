@@ -1,10 +1,11 @@
+import { Book } from '@/components/ui.custom/home/listbook';
 import { axiosWithAuth } from '@/lib/axios';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import useAuth from '../useAuth';
 import useEbookStore from '../useEbookStore';
 
-export default function UseInitBook() {
+export default function UseInitBook(book: Book) {
   const [initBookStyle, setInitBookStyle] = useState(null);
   const [initBookOption, setInitBookOption] = useState(null);
   const [initCurrentLocation, setInitCurrentLocation] = useState(null);
@@ -21,8 +22,13 @@ export default function UseInitBook() {
     bookMarks,
     setBookMarks,
     setHighlights,
+    setBook,
   } = useEbookStore();
   const { user } = useAuth();
+
+  useEffect(() => {
+    setBook(book);
+  }, [book]);
 
   const handleFetchSetting = async () => {
     const token = user?.accessToken;
@@ -53,15 +59,14 @@ export default function UseInitBook() {
   }, [initBookOption, initBookStyle, isSetting]);
 
   const continueReading = async () => {
+    console.log(book);
     const token = user?.accessToken;
     if (!token) {
       console.warn('User not logged in or session information missing');
       return null;
     }
     try {
-      const res = await axiosWithAuth(token).get(
-        '/reader/670c963388ce4da4c956dbf7',
-      );
+      const res = await axiosWithAuth(token).get(`/reader/${book._id}`);
       const result = await res.data;
       setInitCurrentLocation(result.currentLocation);
       setBookMarks(result.bookmarks);

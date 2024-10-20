@@ -4,6 +4,7 @@ import Reader from '../models/reader.model';
 const validateIds = (...ids: string[]) => {
   ids.forEach((id) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log(id);
       throw new Error(`Invalid ID: ${id}`);
     }
   });
@@ -12,7 +13,6 @@ const validateIds = (...ids: string[]) => {
 export async function getOrCreateReader(userId: string, bookId: string) {
   try {
     validateIds(userId, bookId);
-
     let reader = await Reader.findOne({ userId, bookId })
       .populate('highlights')
       .populate('bookmarks');

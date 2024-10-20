@@ -7,7 +7,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { ThemeProvider } from 'next-themes';
 export const getStaticPaths: GetStaticPaths = async () => {
   // Fetch all book IDs or a subset of book IDs
-  const res = await axios.get('/books');
+  const res = await axios.get('/book');
   const books = await res.data.books;
 
   // Generate the paths
@@ -24,7 +24,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id;
   try {
-    const res = await axios.get(`/books/${id}`);
+    const res = await axios.get(`/book/${id}`);
     const book = res.data;
 
     return {

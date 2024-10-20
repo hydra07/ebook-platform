@@ -8,13 +8,14 @@ import 'regenerator-runtime/runtime';
 import useBookMark from '@/hooks/ebook/useBookmark';
 import UseInitBook from '@/hooks/ebook/useInitBook';
 import useSelection from '@/hooks/ebook/useSelection';
+import { Book } from '@/components/ui.custom/home/listbook';
 import Context from './context';
 import Footer from './footer';
 import Header from './header';
 import Loading from './loading';
 import ReadingContinue from './readingContinue';
 // import {Rendition} from "epubjs";
-export default function EbookViewer({ book }: { book: any }) {
+export default function EbookViewer({ book }: { book: Book }) {
   // const [url, setUrl] = useState<string>(
   //   'https://res.cloudinary.com/dws8h9utn/raw/upload/v1728325552/Cu%C3%8C%C2%81%20So%C3%8C%C2%82%C3%8C%C2%81c%20Tu%C3%8C%C2%9Bo%C3%8C%C2%9Bng%20Lai%20-%20Alvin%20Toffler.epub',
   // );
@@ -22,7 +23,7 @@ export default function EbookViewer({ book }: { book: any }) {
   const viewerRef = useRef<any>(null);
   const [isRead, setIsRead] = useState<boolean>(false);
   const [isOpenContinue, setIsOpenContinue] = useState<boolean>(false);
-  const { initCurrentLocation } = UseInitBook();
+  const { initCurrentLocation } = UseInitBook(book);
   useEffect(() => {
     console.log(initCurrentLocation);
     if (initCurrentLocation && !isRead) {

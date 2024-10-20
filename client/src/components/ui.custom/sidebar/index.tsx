@@ -30,7 +30,7 @@ export default function SideBar() {
   }, []);
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col h-full min-h-screen">
         {!isOpen && (
           <button
             className="lg:hidden p-4 fixed top-4 left-4 z-50"
@@ -95,7 +95,7 @@ export default function SideBar() {
                 <ThemeMode />
               </nav>
             </div>
-            <div className="mt-auto">
+            <div className="sticky bottom-0 w-full">
               <Separator className="my-2" />
               <div className="h-16 mb-2">
                 <AuthButton />

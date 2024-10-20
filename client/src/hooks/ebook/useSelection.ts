@@ -15,6 +15,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
     highlights,
     setHighlights,
     color,
+    book,
   } = useEbookStore();
   const { user } = useAuth();
   const [selection, setSelection] = useState<Highlight | null>(null);
@@ -30,10 +31,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
       highlights: _highlights,
     };
     try {
-      const res = await axiosWithAuth(token).post(
-        '/reader/670c963388ce4da4c956dbf7',
-        data,
-      );
+      const res = await axiosWithAuth(token).post(`/reader/${book?._id}`, data);
       // console.log('Location update successful:', res.data);
       const result = await res.data;
       console.log(result);

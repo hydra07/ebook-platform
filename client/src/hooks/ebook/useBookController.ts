@@ -9,12 +9,11 @@ export default function useBookController({ viewerRef }: any) {
   // const [currentLocation, setCurrentLocation] = useState<any | null>(null);
   // const [toc, setToc] = useState<any[]>([]);
 
-
   const [initCurrentLocation, setInitCurrentLocation] = useState<Page | null>(
     null,
   );
   const { user } = useAuth();
-  const { currentLocation, setCurrentLocation, setToc } = useEbookStore();
+  const { currentLocation, setCurrentLocation, setToc, book } = useEbookStore();
 
   const handleCurrentLocation = async () => {
     const token = user?.accessToken;
@@ -26,10 +25,8 @@ export default function useBookController({ viewerRef }: any) {
       currentLocation,
     };
     try {
-      const res = await axiosWithAuth(token).post(
-        '/reader/670c963388ce4da4c956dbf7',
-        data,
-      );
+      console.log('bookk ne', book);
+      const res = await axiosWithAuth(token).post(`/reader/${book?._id}`, data);
       // console.log('Location update successful:', res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -57,7 +54,7 @@ export default function useBookController({ viewerRef }: any) {
     (_page: any) => {
       setCurrentLocation(_page);
     },
-    [setCurrentLocation],
+    [setCurrentLocation, book],
   );
 
   const onTocChange = useCallback(
@@ -72,14 +69,14 @@ export default function useBookController({ viewerRef }: any) {
       if (!viewerRef.current) return;
       viewerRef.current.setLocation(_loc);
     },
-    [viewerRef],
+    [viewerRef, book],
   );
   //
   useEffect(() => {
     if (currentLocation.currentPage !== 0) {
       handleCurrentLocation();
     }
-  }, [currentLocation]);
+  }, [currentLocation, book]);
 
   return {
     currentLocation,
