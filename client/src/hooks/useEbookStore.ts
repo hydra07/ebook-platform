@@ -1,3 +1,4 @@
+import { Book } from '@/components/ui.custom/home/listbook';
 import { BookFlow } from '@/types/ebook';
 import { produce } from 'immer';
 import { create } from 'zustand';
@@ -51,6 +52,9 @@ export interface Color {
 }
 
 interface EbookState {
+  book: Book | null;
+  setBook: (book: Book) => void;
+
   currentLocation: Page;
   setCurrentLocation: (location: Page) => void;
 
@@ -132,6 +136,7 @@ const initialTheme: string = '/themes/dark.theme.css';
 
 // Zustand store
 const useEbookStore = create<EbookState>((set, get) => ({
+  book: null,
   currentLocation: initialCurrentLocation,
   toc: [],
   viewerLayout: initialViewerLayout,
@@ -141,6 +146,16 @@ const useEbookStore = create<EbookState>((set, get) => ({
   highlights: [],
   bookStyle: initialBookStyle,
   color: initialColor,
+
+  setBook: (book: Book) =>
+    set(
+      produce((state) => {
+        console.log(book);
+        if (!shallow(JSON.stringify(state.book), JSON.stringify(book))) {
+          state.book = book;
+        }
+      }),
+    ),
 
   setCurrentLocation: (location: Page) =>
     set(

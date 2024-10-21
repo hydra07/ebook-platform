@@ -14,7 +14,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ThemeMode } from '../ThemeMode';
 import AuthButton from './auth-button';
-import React from 'react';
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
@@ -31,13 +30,12 @@ export default function SideBar() {
   }, []);
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col h-full min-h-screen">
         {!isOpen && (
           <button
             className="lg:hidden p-4 fixed top-4 left-4 z-50"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {/* Icon hoặc biểu tượng cho menu */}
             <MenuIcon className="h-6 w-6" />
           </button>
         )}
@@ -48,30 +46,28 @@ export default function SideBar() {
           className={cn(
             'lg:block fixed lg:static inset-0 lg:inset-auto z-40 bg-mainbackground border-r h-full',
             isOpen ? 'block' : 'hidden',
-
             'w-[280px] lg:static lg:translate-x-0',
           )}
         >
           <button
-            className="absolute top-4 right-4 lg:hidden p-2 z-50" // Đảm bảo nút này luôn trên các thành phần khác
+            className="absolute top-4 right-4 lg:hidden p-2 z-50"
             onClick={() => setIsOpen(false)}
           >
             <XIcon className="h-6 w-6" />
           </button>
-          <div className="flex h-screen max-h-full flex-col gap-2 sticky">
+          <div className="flex flex-col h-full">
             <div className="flex h-[80px] items-center border-b px-6">
               <Link
                 href="/homepage"
                 className="flex items-center gap-2 font-semibold text-mainforeground"
                 prefetch={false}
               >
-                {/* <img src="/logo.png" className="w-16 h-16" /> */}
                 <BookIcon className="h-16 w-16" />
                 <span className="text-lg">Ebook</span>
               </Link>
             </div>
             <div className="flex-1 overflow-auto py-2">
-              <nav className="self-start grid items-start px-4 text-sm font-medium">
+              <nav className="grid items-start px-4 text-sm font-medium">
                 <Link
                   href="/homepage"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:bg-accent hover:text-accent-foreground"
@@ -99,7 +95,7 @@ export default function SideBar() {
                 <ThemeMode />
               </nav>
             </div>
-            <div className="">
+            <div className="sticky bottom-0 w-full">
               <Separator className="my-2" />
               <div className="h-16 mb-2">
                 <AuthButton />
@@ -109,7 +105,7 @@ export default function SideBar() {
         </motion.div>
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black opacity-80  lg:hidden w-[280px]"
+            className="fixed inset-0 bg-black opacity-80 lg:hidden w-[280px]"
             onClick={() => setIsOpen(false)}
           ></div>
         )}

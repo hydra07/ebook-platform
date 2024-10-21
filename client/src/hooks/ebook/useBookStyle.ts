@@ -1,9 +1,13 @@
 //theme,bookOption,bookStyle,viewerLayout,
 
 import useEbookStore from '@/hooks/useEbookStore';
-import { useCallback } from 'react';
+import { axiosWithAuth } from '@/lib/axios';
+import { useCallback, useEffect } from 'react';
+import useAuth from '../useAuth';
 
 export default function useBookStyle({ viewerRef }: any) {
+  const { user } = useAuth();
+
   const {
     theme,
     setTheme,
@@ -14,6 +18,22 @@ export default function useBookStyle({ viewerRef }: any) {
     bookStyle,
     setBookStyle,
   } = useEbookStore();
+
+  const handleUpdate = async () => {
+    const token = user?.accessToken;
+    if (!token) {
+      // throw new Error('User not logged in or session information missing');
+      return null;
+    }
+    const data = {
+      bookOption,
+      bookStyle,
+    };
+
+    const res = await axiosWithAuth(token).post('/ebook/setting', data);
+    const result = await res.data;
+    // console.log('result ', result);
+  };
 
   const onThemeChange = useCallback(
     (_type: 'dark' | 'light') => {
@@ -26,7 +46,7 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // đọc dọc,ngang
   const onDirection = useCallback(
-    (_type: 'Horizontal' | 'Vertical') => {
+    async (_type: 'Horizontal' | 'Vertical') => {
       if (_type === 'Horizontal') {
         setBookOption({ ...bookOption, flow: 'paginated' });
       } else {
@@ -38,7 +58,7 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // phân trang
   const onViewType = useCallback(
-    (_isSpread: boolean) => {
+    async (_isSpread: boolean) => {
       if (_isSpread) {
         setBookOption({ ...bookOption, spread: 'auto' });
       } else {
@@ -50,7 +70,7 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // thay fontsize
   const onFontSize = useCallback(
-    (_size: number) => {
+    async (_size: number) => {
       setBookStyle({ ...bookStyle, fontSize: _size });
     },
     [viewerRef, bookStyle],
@@ -58,7 +78,7 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // khoảng cách giữa các dòng
   const onLineHeight = useCallback(
-    (_size: number) => {
+    async (_size: number) => {
       setBookStyle({ ...bookStyle, lineHeight: _size });
     },
     [viewerRef, bookStyle],
@@ -66,7 +86,7 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // margin vertical
   const onMarginVertical = useCallback(
-    (_size: number) => {
+    async (_size: number) => {
       setBookStyle({ ...bookStyle, marginVertical: _size });
     },
     [viewerRef, bookStyle],
@@ -74,11 +94,15 @@ export default function useBookStyle({ viewerRef }: any) {
 
   // margin horizontal
   const onMarginHorizontal = useCallback(
-    (_size: number) => {
+    async (_size: number) => {
       setBookStyle({ ...bookStyle, marginHorizontal: _size });
     },
     [viewerRef, bookStyle],
   );
+
+  useEffect(() => {
+    handleUpdate();
+  }, [bookStyle, bookOption]);
 
   return {
     theme,

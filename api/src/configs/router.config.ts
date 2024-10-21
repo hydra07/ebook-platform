@@ -1,12 +1,14 @@
-import type { Router } from "express";
-import authRouter from "../routers/auth.router";
-import bookRouter from "../routers/book.router";
-import fileRouter from "../routers/file.router";
-import notificationRouter from "../routers/notification.router";
-import ratingRouter from "../routers/rating.router";
-import userRouter from "../routers/user.router";
-import settingRouter from "../routers/setting.router";
-import favouriteRouter from "../routers/favourite.router";
+import type { Router } from 'express';
+import authRouter from '../routers/auth.router';
+// import bookRouter from '../routers/book.router';
+import fileRouter from '../routers/file.router';
+import newBookRouter from '../routers/newBook.router';
+import notificationRouter from '../routers/notification.router';
+import routerReader from '../routers/reader.router';
+import settingRouter from '../routers/setting.router';
+import userRouter from '../routers/user.router';
+import ratingRouter from '../routers/rating.router';
+import favouriteRouter from '../routers/favourite.router';
 
 interface IRouterConfig {
   path: string;
@@ -23,9 +25,14 @@ export default [
     path: "/api/auth",
     router: authRouter,
   },
+  // {
+  //   path: '/api/books',
+  //   router: bookRouter,
+  // },
   {
-    path: "/api/books",
-    router: bookRouter,
+    path: '/api/book',
+    router: newBookRouter,
+
   },
   {
     path: "/api/upload",
@@ -40,6 +47,7 @@ export default [
     router: notificationRouter,
   },
   {
+
     path: "/api/users", // Add the path for users
     router: userRouter,
   },
@@ -50,5 +58,9 @@ export default [
   {
     path: "/api/favourites",
     router: favouriteRouter,
+  },
+  {
+    path: '/api/reader',
+    router: routerReader,
   },
 ] as IRouterConfig[];
