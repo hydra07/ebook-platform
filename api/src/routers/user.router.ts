@@ -4,10 +4,9 @@ import { authMiddleware } from "../configs/middleware.config";
 import roleRequire from "../configs/middleware.config";
 
 const router = Router();
-
-router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
+router.get("/", roleRequire(["user"]), async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id;
+    const userId = req.userId; // Use req.userId from the roleRequire middleware
     const user = await User.findById(userId);
 
     if (!user) {
@@ -27,7 +26,7 @@ router.put(
   roleRequire(["user"]),
   async (req: Request, res: Response) => {
     try {
-      const userId = req.params.id;
+      const userId = req.userId; // Use req.userId from the roleRequire middleware
       const { username, image } = req.body;
 
       const updateData = { username, image };
