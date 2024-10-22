@@ -1,12 +1,41 @@
+import { axiosWithAuth } from '@/lib/axios';
 import { isCfiInRange } from '@/utils/ebook.utils';
+import axios from 'axios';
 import { useCallback } from 'react';
+import useAuth from '../useAuth';
 import useEbookStore from '../useEbookStore';
-
 export default function useBookMark({ viewerRef }: any) {
   const { bookMarks, setBookMarks, currentLocation } = useEbookStore();
+  const { user } = useAuth();
+
+  const updateBookmark = async (bookmarks: any) => {
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    const data = {
+      bookmarks,
+    };
+    try {
+      const res = await axiosWithAuth(token).post('/reader/670c963388ce4da4c956dbf7', data);
+      // console.log('Location update successful:', res.data);
+      const result = await res.data
+      console.log(result)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error updating bookmark:',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
 
   const addBookmark = useCallback(
-    (_currentLocation: any) => {
+    async (_currentLocation: any) => {
       const bookmark = {
         key: Date.now(),
         name: `Bookmark`,
@@ -16,18 +45,20 @@ export default function useBookMark({ viewerRef }: any) {
         date: new Date().toLocaleString(),
       };
       setBookMarks([...bookMarks, bookmark]);
+      await updateBookmark([...bookMarks, bookmark]);
     },
-    [bookMarks],
+    [bookMarks, user],
   );
 
   const removeBookmark = useCallback(
-    (_cfi: string) => {
+    async (_cfi: string) => {
       const bookMarksFilter = bookMarks.filter(
         (bookmark) => bookmark.cfi !== _cfi,
       );
       setBookMarks(bookMarksFilter);
+      await updateBookmark(bookMarksFilter);
     },
-    [bookMarks],
+    [bookMarks, user],
   );
 
   // const isBookmarkAdded = useMemo(
@@ -51,7 +82,6 @@ export default function useBookMark({ viewerRef }: any) {
     ),
   );
 
-  
   return {
     bookMarks,
     addBookmark,

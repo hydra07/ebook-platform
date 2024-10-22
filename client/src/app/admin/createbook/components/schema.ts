@@ -12,7 +12,7 @@ const formSchema = z.object({
 //   }),
     author_name: z.string().min(2).max(50),
     author_description: z.string().min(2).max(2000),
-  category_name: z.string().min(2).max(50),
+  category: z.array(z.object({ name: z.string().min(2).max(50) })),
   cover: z.string().url(),
   bookUrl: z.string().url({message: "Please enter a valid URL"}),
   price: z.string().refine((val) => !isNaN(parseFloat(val)), {
