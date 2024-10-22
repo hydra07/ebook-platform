@@ -1,4 +1,5 @@
-'use client';
+'use client'
+import React, { useEffect, useState } from 'react';
 import { Book } from '@/components/ui.custom/home/listbook';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +33,7 @@ import {
   Star,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+
 export default function BookDetail({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,7 +121,7 @@ export default function BookDetail({ id }: { id: string }) {
       <Card>
         <CardContent className="p-0">
           <div className="md:flex">
-            <div className="md:w-1/3">
+            <div className="md:w-1/3 sticky top-6 self-start">
               <img
                 className="h-96 w-full object-cover"
                 src={book.cover}
@@ -130,7 +131,7 @@ export default function BookDetail({ id }: { id: string }) {
             <div className="p-8 md:w-2/3">
               <div className="flex flex-row space-x-3">
                 {book.category.map((c) => (
-                  <Badge variant="outline" className="mb-2">
+                  <Badge key={c.name} variant="outline" className="mb-2">
                     {c.name}
                   </Badge>
                 ))}
@@ -181,11 +182,7 @@ export default function BookDetail({ id }: { id: string }) {
                 />
               </div>
               <Button asChild>
-                <Link
-                  href={`/ebook/${book._id}`}
-                  // target="_blank"
-                  // rel="noopener noreferrer"
-                >
+                <Link href={`/ebook/${book._id}`}>
                   <Globe className="w-4 h-4 mr-2" />
                   Read Book
                 </Link>
@@ -232,6 +229,7 @@ export default function BookDetail({ id }: { id: string }) {
     </div>
   );
 }
+
 function InfoItem({
   icon,
   label,

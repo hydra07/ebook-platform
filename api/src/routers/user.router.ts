@@ -2,9 +2,9 @@ import { Router, Request, Response } from "express";
 import User from "../models/user.model";
 import { authMiddleware } from "../configs/middleware.config";
 import roleRequire from "../configs/middleware.config";
-
+import authenticate, { decode, generateToken } from '../services/auth.service';
 const router = Router();
-router.get("/", roleRequire(["user"]), async (req: Request, res: Response) => {
+router.get("/:id", await roleRequire, async (req: Request, res: Response) => {
   try {
     const userId = req.userId; // Use req.userId from the roleRequire middleware
     const user = await User.findById(userId);

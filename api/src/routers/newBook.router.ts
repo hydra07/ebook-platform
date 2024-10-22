@@ -5,6 +5,8 @@ import {
   getBook,
   getBookById,
   newBook,
+  updateBook,
+  deleteBook,
 } from '../services/book.service';
 
 const router = Router();
@@ -70,6 +72,33 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Book not found' }); // Handle not found case
     }
     res.status(200).json(book); // Return the found book
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const updatedBook = await updateBook(id, updatedData);
+    if (!updatedBook) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.status(200).json(updatedBook);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedBook = await deleteBook(id);
+    if (!deletedBook) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.status(200).json({ message: 'Book deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
