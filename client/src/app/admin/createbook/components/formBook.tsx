@@ -49,7 +49,7 @@ export default function FormBook() {
     setLoading(true);
     setMessage("");
     try {
-      const response = await axios.post(`${env.NEXT_PUBLIC_API_URL}/book`, data);
+      const response = await axios.post(`/book`, data);
       setMessage("Book created successfully!");
       router.push("/admin/listbook");
     } catch (error) {
