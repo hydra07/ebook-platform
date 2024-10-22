@@ -37,6 +37,7 @@ export default function FormBook() {
       category: [{ name: "" }],
       cover: "",
       bookUrl: "",
+      price: "",
     },
   });
 
@@ -49,7 +50,11 @@ export default function FormBook() {
     setLoading(true);
     setMessage("");
     try {
-      const response = await axios.post(`${env.NEXT_PUBLIC_API_URL}/book`, data);
+      const submissionData = {
+        ...data,
+        price: parseFloat(data.price as unknown as string) || 0,
+      };
+      const response = await axios.post("/book", submissionData);
       setMessage("Book created successfully!");
       router.push("/admin/listbook");
     } catch (error) {
@@ -73,11 +78,12 @@ export default function FormBook() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {message && (
             <div
+              className={`text-center ${message.includes("successfully")
               className={`text-center font-semibold ${
                 message.includes("successfully")
                   ? "text-green-500"
                   : "text-red-500"
-              }`}
+                }`}
             >
               {message}
             </div>
@@ -205,6 +211,23 @@ export default function FormBook() {
                     <option value="COMPLETED">Completed</option>
                     <option value="DISCONTINUED">Discontinued</option>
                   </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    placeholder="Enter book price"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

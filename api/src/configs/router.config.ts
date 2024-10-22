@@ -6,6 +6,7 @@ import newBookRouter from '../routers/newBook.router';
 import notificationRouter from '../routers/notification.router';
 import routerReader from '../routers/reader.router';
 import settingRouter from '../routers/setting.router';
+import shopRouter from '../routers/shop.router';
 import userRouter from '../routers/user.router';
 import ratingRouter from '../routers/rating.router';
 import favouriteRouter from '../routers/favourite.router';
@@ -47,7 +48,11 @@ export default [
     router: notificationRouter,
   },
   {
-
+    {
+    path: '/api/shop',
+    router: shopRouter,
+  },
+  {
     path: "/api/users", // Add the path for users
     router: userRouter,
   },

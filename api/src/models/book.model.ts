@@ -1,4 +1,3 @@
-
 import mongoose, { Schema } from 'mongoose';
 const bookSchema = new Schema(
   {
@@ -47,6 +46,15 @@ const bookSchema = new Schema(
     //     trim: true,
     //   }
     // },
+  price: {
+    type: Number,
+    required: true,
+  },
+  currentQuantity: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
 
     category: [
       {
