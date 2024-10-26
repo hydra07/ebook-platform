@@ -22,31 +22,31 @@ router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
 });
 
 router.put(
-  "/:id",
-  authMiddleware,
-  roleRequire(["user"]),
-  async (req: Request, res: Response) => {
-    try {
-      const userId = req.params.id;
-      const { username, image } = req.body;
+    "/:id",
+    authMiddleware,
+    roleRequire(["user"]),
+    async (req: Request, res: Response) => {
+      try {
+        const userId = req.params.id;
+        const { username, image, gender, dateOfBirth, phoneNumber } = req.body;
 
-      const updateData = { username, image };
+        const updateData = { username, image, gender, dateOfBirth, phoneNumber };
 
-      const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-        new: true,
-        runValidators: true,
-      });
+        const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+          new: true,
+          runValidators: true,
+        });
 
-      if (!updatedUser) {
-        return res.status(404).json({ error: "User not found" });
+        if (!updatedUser) {
+          return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json(updatedUser);
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+        return res.status(500).json({ error: "Error updating user profile" });
       }
-
-      return res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      return res.status(500).json({ error: "Error updating user profile" });
     }
-  }
 );
 
 export default router;
