@@ -42,9 +42,15 @@ router.put(
         }
 
         return res.status(200).json(updatedUser);
-      } catch (error) {
-        console.error("Error updating user profile:", error);
-        return res.status(500).json({ error: "Error updating user profile" });
+      } catch (error: any) {
+        if (error.name === "ValidationError") {
+          return res.status(400).json({ error: "Invalid phone number format" });
+        } else if (error.code === 11000 && error.keyPattern && error.keyPattern.phoneNumber) {
+          return res.status(400).json({ error: "Phone number already exists" });
+        } else {
+          console.error("Error updating user profile:", error);
+          return res.status(500).json({ error: "Error updating user profile" });
+        }
       }
     }
 );

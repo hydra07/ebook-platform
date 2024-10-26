@@ -1,5 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 
+const validatePhoneNumber = (phoneNumber: string) => {
+    const phoneRegex = /^\d{10}$/; // Matches 10-digit numbers
+    return phoneRegex.test(phoneNumber);
+};
+
 const userSchema = new Schema(
     {
         //--provider---
@@ -44,6 +49,10 @@ const userSchema = new Schema(
         phoneNumber: {
             type: String,
             required: false,
+            unique: true,
+            validate: {
+                validator: validatePhoneNumber
+            }
         },
     },
     { timestamps: true },
