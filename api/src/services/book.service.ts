@@ -25,6 +25,8 @@ export async function newBook(data: any): Promise<InstanceType<typeof Book>> {
     bookUrl: data.bookUrl,
     author: author,
     category: data.category,
+    price: data.price,
+    currentQuantity: data.currentQuantity,
   });
   const savedBook = await book.save();
   return await savedBook;
@@ -105,3 +107,35 @@ export async function getAllAuthor() {
   const author = await Author.find();
   return await author;
 }
+
+export const updateBook = async (id: string, data: any) => {
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(
+      id,
+      {
+        title: data.title,
+        cover: data.cover,
+        description: data.description,
+        bookUrl: data.bookUrl,
+        status: data.status,
+        category: data.category, // Ensure category is updated correctly
+        price: data.price,
+        currentQuantity: data.currentQuantity,
+        lastUpdateAt: new Date(), // Update the last updated timestamp
+      },
+      { new: true } // Return the updated document
+    );
+    return updatedBook;
+  } catch (error: any) {
+    throw new Error('Error updating book: ' + error.message);
+  }
+};
+
+export const deleteBook = async (id: string) => {
+  try {
+    const deletedBook = await Book.findByIdAndDelete(id);
+    return deletedBook;
+  } catch (error: any) {
+    throw new Error('Error deleting book: ' + error.message);
+  }
+};

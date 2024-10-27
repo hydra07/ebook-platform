@@ -28,6 +28,7 @@ export interface Book {
   category: Category[];
   createdAt: string;
   updatedAt: string;
+  price: number;
 }
 interface Author {
   _id: string;

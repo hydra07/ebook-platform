@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-
 const bookSchema = new Schema(
   {
     title: {
@@ -47,6 +46,15 @@ const bookSchema = new Schema(
     //     trim: true,
     //   }
     // },
+  price: {
+    type: Number,
+    required: true,
+  },
+  currentQuantity: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
 
     category: [
       {
@@ -58,7 +66,6 @@ const bookSchema = new Schema(
   },
   { timestamps: true },
 );
-
 const Book =
   // mongoose.models.Reader ||
   mongoose.model('Book', bookSchema);

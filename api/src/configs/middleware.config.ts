@@ -5,7 +5,7 @@
 //   userId?: string;
 //   userRole?: string[];
 // }
-
+import express from 'express';
 import { NextFunction, Request, Response } from 'express';
 import { verifyToken } from '../services/auth.service';
 // interface RequestWithAuth extends Request

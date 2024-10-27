@@ -1,7 +1,8 @@
 // import { Request, Response } from 'express';
-// import Book from '../models/_book.model';
+// import Book from '../models/book.model';
 // import Author from '../models/author.model';
 // import Category from '../models/catagory.model'
+// import { QueryOptions } from 'mongoose';
 
 // export const createBook = async (req: Request, res: Response) => {
 //   try {
@@ -49,6 +50,7 @@
 
 //     // Populate the author details in the response
 //     await savedBook.populate('author');
+//     await savedBook.populate('category');
 
 //     res.status(201).json(savedBook);
 //   } catch (error) {
@@ -85,7 +87,7 @@
 
 //   export const getBookById = async (req: Request, res: Response) => {
 //     try {
-//       const book = await Book.findById(req.params.id).populate('author');
+//       const book = await Book.findById(req.params.id).populate('author').populate('category');
 //       if (!book) {
 //         return res.status(404).json({ message: 'Book not found' });
 //       }
@@ -154,3 +156,55 @@
 //     });
 //   }
 // };
+
+// export async function getBook(
+//   options: QueryOptions,
+//   skip?: number,
+//   take?: number,
+// ): Promise<{ books: InstanceType<typeof Book>[]; total: number }> {
+//   let query = Book.find().populate('author');
+//   if (options?.authorName) {
+//     const keywords = options.authorName.split(' ').filter((k: string) => k);
+//     query = query.where({
+//       'author.name': {
+//         $in: keywords.map((keyword: string) => new RegExp(keyword, 'i')),
+//       },
+//     });
+//   }
+//   if (options?.title) {
+//     const keywords = options.title.split(' ').filter((k: string) => k);
+//     query = query
+//       .where({
+//         $or: keywords.map((keyword: string) => ({
+//           title: new RegExp(keyword, 'i'),
+//         })),
+//       })
+//       .sort({ createdAt: -1 });
+//   }
+//   if (options?.category) {
+//     const categories = Array.isArray(options.category)
+//       ? options.category
+//       : [options.category];
+//     query = query.where({
+//       'category.name': { $in: categories },
+//     });
+//   }
+//   if (options?.sortBy) {
+//     const sortOrder = options.sortOrder === 'desc' ? -1 : 1; // Determine sort order
+//     query = query.sort({ [options.sortBy]: sortOrder }); // Apply sorting
+//   }
+//   if (skip) {
+//     query = query.skip(skip);
+//   }
+//   if (take) {
+//     query = query.limit(take);
+//   }
+//   const [books, total] = await Promise.all([
+//     query,
+//     Book.countDocuments(query.getQuery()),
+//   ]);
+//   return {
+//     books,
+//     total,
+//   };
+// }
