@@ -1,29 +1,27 @@
-import { Router, Request, Response } from "express";
-import User from "../models/user.model";
-import { authMiddleware } from "../configs/middleware.config";
-import roleRequire from "../configs/middleware.config";
-import authenticate, { decode, generateToken } from '../services/auth.service';
+import { Request, Response, Router } from 'express';
+import roleRequire, { authMiddleware } from '../configs/middleware.config';
+import User from '../models/user.model';
 const router = Router();
-router.get("/:id", await roleRequire, async (req: Request, res: Response) => {
+router.get('/:id', await roleRequire, async (req: Request, res: Response) => {
   try {
     const userId = req.userId; // Use req.userId from the roleRequire middleware
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error("Error fetching user profile:", error);
-    return res.status(500).json({ error: "Error fetching user profile" });
+    console.error('Error fetching user profile:', error);
+    return res.status(500).json({ error: 'Error fetching user profile' });
   }
 });
 
 router.put(
-  "/:id",
+  '/:id',
   authMiddleware,
-  roleRequire(["user"]),
+  roleRequire(['user']),
   async (req: Request, res: Response) => {
     try {
       const userId = req.userId; // Use req.userId from the roleRequire middleware
@@ -37,10 +35,10 @@ router.put(
       });
 
       if (!updatedUser) {
-        return res.status(404).json({ error: "User not found" });
-
+        return res.status(404).json({ error: 'User not found' });
       }
-    }
+    } catch (error) {}
+  },
 );
 
 export default router;
