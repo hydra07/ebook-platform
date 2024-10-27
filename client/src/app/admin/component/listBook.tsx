@@ -5,6 +5,7 @@ import axios from '@/lib/axios'
 import Link from 'next/link'
 import { Book, ChevronLeft, ChevronRight, Pencil, PlusCircle, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import useAuth from '@/hooks/useAuth'
 interface Book {
   _id: string
   title: string
@@ -20,7 +21,7 @@ export default function Component() {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-
+  const { user } = useAuth();
   useEffect(() => {
     fetchBooks()
   }, [currentPage])

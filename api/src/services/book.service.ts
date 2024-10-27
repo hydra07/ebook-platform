@@ -25,6 +25,8 @@ export async function newBook(data: any): Promise<InstanceType<typeof Book>> {
     bookUrl: data.bookUrl,
     author: author,
     category: data.category,
+    price: data.price,
+    currentQuantity: data.currentQuantity,
   });
   const savedBook = await book.save();
   return await savedBook;
@@ -117,7 +119,9 @@ export const updateBook = async (id: string, data: any) => {
         bookUrl: data.bookUrl,
         status: data.status,
         category: data.category, // Ensure category is updated correctly
-        lastUpdateAt: new Date() // Update the last updated timestamp
+        price: data.price,
+        currentQuantity: data.currentQuantity,
+        lastUpdateAt: new Date(), // Update the last updated timestamp
       },
       { new: true } // Return the updated document
     );

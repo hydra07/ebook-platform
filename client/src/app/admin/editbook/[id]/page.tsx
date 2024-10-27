@@ -30,6 +30,8 @@ export default function EditBook({ params }: { params: { id: string } }) {
       category: [{ name: "" }],
       cover: "",
       bookUrl: "",
+      price: 0,
+      currentQuantity: 0,
     },
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -45,9 +47,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/book/${params.id}`
-      );
+      const response = await axios.get(`/book/${params.id}`);
       setBook(response.data);
       form.reset(response.data); // Reset form with fetched book data
     } catch (error) {
@@ -83,15 +83,18 @@ export default function EditBook({ params }: { params: { id: string } }) {
     updatedCategories.splice(index, 1); // Remove the category at the specified index
     form.setValue("category", updatedCategories);
   };
+
   const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
     console.log("Submitting data:", data); // Kiểm tra dữ liệu gửi đi
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/book/${params.id}`,
-        data
-      );
+      const submissionData = {
+        ...data,
+        price: parseFloat(data.price as unknown as string) || 0,
+        currentQuantity: parseInt(data.currentQuantity as unknown as string) || 0,
+      };
+      const response = await axios.put(`/book/${params.id}`, submissionData);
       console.log("Response from API:", response.data); // Kiểm tra phản hồi từ API
       router.push("/admin/listbook");
     } catch (error) {
@@ -215,6 +218,48 @@ export default function EditBook({ params }: { params: { id: string } }) {
                       <FileUploadDropzone
                         onFileUploads={handleFileUpload}
                         maxFiles={1}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <input
+                        type="number"
+                        {...field}
+                        required
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div>
+              <FormField
+                control={form.control}
+                name="currentQuantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Quantity</FormLabel>
+                    <FormControl>
+                      <input
+                        type="number"
+                        {...field}
+                        required
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                       />
                     </FormControl>
                     <FormMessage />

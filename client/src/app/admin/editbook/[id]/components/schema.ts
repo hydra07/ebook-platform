@@ -15,5 +15,7 @@ const formSchema = z.object({
   category: z.array(z.object({ name: z.string().min(2).max(50) })),
   cover: z.string().url(),
   bookUrl: z.string().url({message: "Please enter a valid URL"}),
+  price: z.number().min(1000).max(1000000),
+  currentQuantity: z.number().min(0).max(1000000),
 })
 export default formSchema

@@ -8,12 +8,14 @@ import {
   updateBook,
   deleteBook,
 } from '../services/book.service';
+import roleRequire from '../configs/middleware.config';
+
 
 const router = Router();
 router.post('/', async (req, res) => {
   try {
     const data = req.body;
-    const book = newBook(data);
+    const book = await newBook(data);
     res.status(200).json({
       book,
       message: 'Created success!',

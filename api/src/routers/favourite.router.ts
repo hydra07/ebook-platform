@@ -2,10 +2,10 @@ import { Router, Request, Response } from "express";
 import Favourite from "../models/favourite.model";
 import { authMiddleware } from "../configs/middleware.config";
 import { decode } from "../services/auth.service";
-
+import roleRequire from "../configs/middleware.config";
 const router = Router();
 
-router.post("/:bookId", authMiddleware, async (req: Request, res: Response) => {
+router.post("/:bookId", roleRequire(), async (req: Request, res: Response) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) {
@@ -26,7 +26,7 @@ router.post("/:bookId", authMiddleware, async (req: Request, res: Response) => {
     }
 });
 
-router.get("/", authMiddleware, async (req: Request, res: Response) => {
+router.get("/", roleRequire(), async (req: Request, res: Response) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) {
@@ -39,7 +39,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
         const favourites = await Favourite.find({ userId })
             .populate({
                 path: 'bookId',
-                select: 'title bookUrl'
+                select: 'title bookUrl cover'
             });
 
         return res.status(200).json(favourites);
@@ -49,7 +49,7 @@ router.get("/", authMiddleware, async (req: Request, res: Response) => {
     }
 });
 
-router.delete("/:bookId", authMiddleware, async (req: Request, res: Response) => {
+router.delete("/:bookId", roleRequire(), async (req: Request, res: Response) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) {

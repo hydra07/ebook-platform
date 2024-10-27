@@ -17,15 +17,24 @@ import { Input } from "@/components/ui/input";
 import FileUploadDropzone from "@/components/ui.custom/FileUploads";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { env } from "@/lib/validateEnv";
 import { Trash2, Plus } from "lucide-react";
-
+import useAuth from "@/hooks/useAuth";
 export default function FormBook() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const { user } = useAuth();
+    // Check if the user is an admin
+    useEffect(() => {
+      if (!user || !user.role.includes('admin')) {
+        setMessage("You are not authorized to access this page");
+        router.push('/'); // Redirect to home or another page if not admin
+      }
+    }, [user, router]);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -37,6 +46,8 @@ export default function FormBook() {
       category: [{ name: "" }],
       cover: "",
       bookUrl: "",
+      price: "",
+      currentQuantity: "",
     },
   });
 
@@ -49,7 +60,13 @@ export default function FormBook() {
     setLoading(true);
     setMessage("");
     try {
-      const response = await axios.post(`/book`, data);
+      const submissionData = {
+        ...data,
+        price: parseFloat(data.price as unknown as string) || 0,
+        currentQuantity: parseInt(data.currentQuantity as unknown as string) || 0,
+      };
+      console.log('lol', submissionData);
+      const response = await axios.post("/book", submissionData);
       setMessage("Book created successfully!");
       router.push("/admin/listbook");
     } catch (error) {
@@ -73,7 +90,7 @@ export default function FormBook() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {message && (
             <div
-              className={`text-center font-semibold ${
+              className={`text-center ${
                 message.includes("successfully")
                   ? "text-green-500"
                   : "text-red-500"
@@ -205,6 +222,40 @@ export default function FormBook() {
                     <option value="COMPLETED">Completed</option>
                     <option value="DISCONTINUED">Discontinued</option>
                   </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    placeholder="Enter book price"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="currentQuantity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Current Quantity</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    placeholder="Enter current quantity"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

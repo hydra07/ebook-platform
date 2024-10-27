@@ -15,5 +15,11 @@ const formSchema = z.object({
   category: z.array(z.object({ name: z.string().min(2).max(50) })),
   cover: z.string().url(),
   bookUrl: z.string().url({message: "Please enter a valid URL"}),
-})
-export default formSchema
+  price: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Price must be a valid number",
+  }),
+  currentQuantity: z.string().refine((val) => !isNaN(parseInt(val)), {
+    message: "Current quantity must be a valid number",
+  }),
+});
+export default formSchema;
