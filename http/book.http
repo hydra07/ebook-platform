@@ -47,13 +47,31 @@ GET http://localhost:5000/api/book/?authorName=John
 
 
 
-
 ###GET by id
-GET http://localhost:5000/api/book/6713ce1545b388edab3eaa71
+GET http://localhost:5000/api/book/6713cdf945b388edab3eaa6d
 
 
 ####
 GET http://localhost:5000/api/book/category
+
+
+
+#### Rating book
+POST http://localhost:5000/api/book/rating
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDdlN2I0MTY5N2YzZTU5M2YyOTYwMCIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzAwMDQ1MzIsImV4cCI6MTczMDAxMTczMn0.p0DSNUMTvb67QlsWWvHPZOYx7ngS-4C2EKuqnUUpJ6k
+Content-Type: application/json
+
+{
+  "bookId": "6713ce1545b388edab3eaa71",
+  "score": 5
+}
+
+
+### Get rating book
+GET http://localhost:5000/api/book/rating/6713cdf945b388edab3eaa6d
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDdlN2I0MTY5N2YzZTU5M2YyOTYwMCIsInJvbGUiOlsidXNlciJdLCJpYXQiOjE3MzAwMTI0NDAsImV4cCI6MTczMDAxOTY0MH0.RwK-8Dl7WW4CMeZAEqd2zWglslEqy72OXaJUx_z-xUM
+Content-Type: application/json
+
 
 
 

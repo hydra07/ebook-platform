@@ -47,7 +47,21 @@ const bookSchema = new Schema(
     //     trim: true,
     //   }
     // },
-
+    ratings: [
+      {
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        score: {
+          type: Number,
+          min: 0,
+          max: 5,
+          required: true,
+        },
+      },
+    ],
     category: [
       {
         name: {

@@ -15,24 +15,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from '@/lib/axios';
-import {
-  ArrowLeft,
-  BookOpen,
-  Calendar,
-  Clock,
-  Eye,
-  Globe,
-  PenTool,
-  Star,
-} from 'lucide-react';
+import { BookOpen, Calendar, Clock, Eye, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Rating from './rating';
 export default function BookDetail({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
@@ -141,7 +132,7 @@ export default function BookDetail({ id }: { id: string }) {
               <CardDescription className="text-xl mb-4">
                 by {book.author.name}
               </CardDescription>
-              <div className="flex items-center mb-4">
+              {/* <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
@@ -156,7 +147,8 @@ export default function BookDetail({ id }: { id: string }) {
                 <span className="ml-2 text-sm text-muted-foreground">
                   {(book as any).rating || 'Not rated'}
                 </span>
-              </div>
+              </div> */}
+              <Rating bookId={book._id} ratings={book.ratings} />
               <p className="text-muted-foreground mb-6">{book.description}</p>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <InfoItem
@@ -215,7 +207,7 @@ export default function BookDetail({ id }: { id: string }) {
         </CardContent>
       </Card>
 
-      <CardFooter className="flex justify-between p-0">
+      {/* <CardFooter className="flex justify-between p-0">
         <Button asChild variant="outline">
           <Link href={`/admin/editbook/${book._id}`}>
             <PenTool className="w-4 h-4 mr-2" />
@@ -228,7 +220,7 @@ export default function BookDetail({ id }: { id: string }) {
             Back to List
           </Link>
         </Button>
-      </CardFooter>
+      </CardFooter> */}
     </div>
   );
 }

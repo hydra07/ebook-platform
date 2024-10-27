@@ -1,10 +1,13 @@
 import { Router } from 'express';
+import roleRequire from '../configs/middleware.config';
 import {
+  checkUserRating,
   getAllAuthor,
   getAllCategories,
   getBook,
   getBookById,
   newBook,
+  ratingBook,
 } from '../services/book.service';
 
 const router = Router();
@@ -61,15 +64,53 @@ router.get('/author', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+router.post('/rating', roleRequire(), async (req, res) => {
+  try {
+    const { bookId, score } = req.body;
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+    const rating = await ratingBook(userId, bookId, score);
+    res.status(200).json(rating);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+router.get('/rating/:bookId', roleRequire(), async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+    const rating = await checkUserRating(userId, bookId);
+    res.status(200).json(rating);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params; // Get the book ID from the request parameters
+    // const userId = req.query.userId as string;
     const book = await getBookById(id); // Call the service to get the book by ID
     if (!book) {
       return res.status(404).json({ message: 'Book not found' }); // Handle not found case
     }
-    res.status(200).json(book); // Return the found book
+    // let isRate = null;
+    // if (userId) {
+    //   isRate = await checkUserRating(userId, book._id.toString());
+    // }
+    // const totalRatings = book.ratings.length;
+    // const averageRating =
+    //   totalRatings > 0
+    //     ? book.ratings.reduce((sum, rating) => sum + rating.score, 0) /
+    //       totalRatings
+    //     : 0;
+    // (book as any).isRate = isRate;
+    res.status(200).json(book);
+    // res.status(200).json({ book, isRate }); // Return the found book
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

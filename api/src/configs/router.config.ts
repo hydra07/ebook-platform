@@ -1,10 +1,11 @@
 import type { Router } from 'express';
 import authRouter from '../routers/auth.router';
 // import bookRouter from '../routers/book.router';
+import commentRouter from '../routers/comment.router';
 import fileRouter from '../routers/file.router';
 import newBookRouter from '../routers/newBook.router';
 import notificationRouter from '../routers/notification.router';
-import routerReader from '../routers/reader.router';
+import readerRouter from '../routers/reader.router';
 import settingRouter from '../routers/setting.router';
 interface IRouterConfig {
   path: string;
@@ -43,6 +44,10 @@ export default [
   },
   {
     path: '/api/reader',
-    router: routerReader,
+    router: readerRouter,
+  },
+  {
+    path: '/api/comment',
+    router: commentRouter,
   },
 ] as IRouterConfig[];

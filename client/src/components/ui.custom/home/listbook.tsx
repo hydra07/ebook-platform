@@ -28,11 +28,16 @@ export interface Book {
   category: Category[];
   createdAt: string;
   updatedAt: string;
+  ratings: Rating[];
 }
 interface Author {
   _id: string;
   name: string;
   description: string;
+}
+export interface Rating {
+  userId: string;
+  score: number;
 }
 interface CategoryBooks {
   books: Book[];
