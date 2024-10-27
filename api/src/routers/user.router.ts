@@ -2,12 +2,11 @@ import { Router, Request, Response } from "express";
 import User from "../models/user.model";
 import { authMiddleware } from "../configs/middleware.config";
 import roleRequire from "../configs/middleware.config";
-
+import authenticate, { decode, generateToken } from '../services/auth.service';
 const router = Router();
-
-router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
+router.get("/:id", await roleRequire, async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id;
+    const userId = req.userId; // Use req.userId from the roleRequire middleware
     const user = await User.findById(userId);
 
     if (!user) {
@@ -22,35 +21,24 @@ router.get("/:id", authMiddleware, async (req: Request, res: Response) => {
 });
 
 router.put(
-    "/:id",
-    authMiddleware,
-    roleRequire(["user"]),
-    async (req: Request, res: Response) => {
-      try {
-        const userId = req.params.id;
-        const { username, image, gender, dateOfBirth, phoneNumber } = req.body;
+  "/:id",
+  authMiddleware,
+  roleRequire(["user"]),
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.userId; // Use req.userId from the roleRequire middleware
+      const { username, image } = req.body;
 
-        const updateData = { username, image, gender, dateOfBirth, phoneNumber };
+      const updateData = { username, image };
 
-        const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-          new: true,
-          runValidators: true,
-        });
+      const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+        new: true,
+        runValidators: true,
+      });
 
-        if (!updatedUser) {
-          return res.status(404).json({ error: "User not found" });
-        }
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
 
-        return res.status(200).json(updatedUser);
-      } catch (error: any) {
-        if (error.name === "ValidationError") {
-          return res.status(400).json({ error: "Invalid phone number format" });
-        } else if (error.code === 11000 && error.keyPattern && error.keyPattern.phoneNumber) {
-          return res.status(400).json({ error: "Phone number already exists" });
-        } else {
-          console.error("Error updating user profile:", error);
-          return res.status(500).json({ error: "Error updating user profile" });
-        }
       }
     }
 );

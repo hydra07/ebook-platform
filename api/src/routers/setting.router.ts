@@ -29,7 +29,7 @@ router.post('/setting', await roleRequire(), async (req, res) => {
       return res.status(400).json({ message: 'userId is required' });
     }
     const data = req.body;
-    console.log('body: ', JSON.stringify(data));
+    // console.log('body: ', JSON.stringify(data));
     const setting = await newSetting(data, userId);
     res.status(201).json(setting);
   } catch (error) {

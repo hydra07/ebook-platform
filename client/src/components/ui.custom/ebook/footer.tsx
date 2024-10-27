@@ -40,7 +40,7 @@ export default function Footer({ onPageMove, height = 30 }: FooterProps) {
     onPageMove('next');
   };
 
-  console.log(JSON.stringify(currentLocation));
+  // console.log(JSON.stringify(currentLocation));
   return (
     <footer
       className={cn(

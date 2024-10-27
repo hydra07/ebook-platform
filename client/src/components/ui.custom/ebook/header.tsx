@@ -170,30 +170,39 @@ function Toc({ onLocation }: TocProps) {
             initial="hidden"
             animate="show"
           >
-            {toc.map((item: any, index: number) => (
-              <motion.div key={index} variants={itemVariants}>
-                <SheetClose asChild>
-                  <motion.div
-                    whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
-                      onClick={() => onClickItem(item.href)}
+            {Array.isArray(toc) ? ( // Check if toc is an array
+              toc.map((item: any, index: number) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <SheetClose asChild>
+                    <motion.div
+                      whileHover={{
+                        scale: 1.05,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <motion.span
-                        className="text-sm font-medium"
-                        whileHover={{ x: 5 }}
-                        transition={{ type: 'spring', stiffness: 300 }}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                        onClick={() => onClickItem(item.href)}
                       >
-                        {item.label}
-                      </motion.span>
-                    </Button>
-                  </motion.div>
-                </SheetClose>
-              </motion.div>
-            ))}
+                        <motion.span
+                          className="text-sm font-medium"
+                          whileHover={{ x: 5 }}
+                          transition={{ type: 'spring', stiffness: 300 }}
+                        >
+                          {item.label}
+                        </motion.span>
+                      </Button>
+                    </motion.div>
+                  </SheetClose>
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center text-gray-400">
+                No contents available
+              </div> // Fallback if toc is not an array
+            )}
           </motion.div>
         </ScrollArea>
       </SheetContent>

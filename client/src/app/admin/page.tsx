@@ -23,6 +23,7 @@ interface User {
 export default function Manage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoadingBooks, setIsLoadingBooks] = useState(true);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [errorBooks, setErrorBooks] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export default function Manage() {
     try {
       const response = await axios.get('http://localhost:5000/api/books');
       setBooks(response.data.books);
+      setIsAdmin(response.data.role === 'admin');
     } catch (error) {
       console.error('Error fetching books:', error);
       setErrorBooks('Failed to fetch books. Please try again later.');
