@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import roleRequire from '../configs/middleware.config';
 import {
   checkUserRating,
   getAllAuthor,
@@ -8,13 +7,17 @@ import {
   getBookById,
   newBook,
   ratingBook,
+  updateBook,
+  deleteBook,
 } from '../services/book.service';
+import roleRequire from '../configs/middleware.config';
+
 
 const router = Router();
 router.post('/', async (req, res) => {
   try {
     const data = req.body;
-    const book = newBook(data);
+    const book = await newBook(data);
     res.status(200).json({
       book,
       message: 'Created success!',
@@ -111,6 +114,33 @@ router.get('/:id', async (req, res) => {
     // (book as any).isRate = isRate;
     res.status(200).json(book);
     // res.status(200).json({ book, isRate }); // Return the found book
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const updatedBook = await updateBook(id, updatedData);
+    if (!updatedBook) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.status(200).json(updatedBook);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedBook = await deleteBook(id);
+    if (!deletedBook) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.status(200).json({ message: 'Book deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

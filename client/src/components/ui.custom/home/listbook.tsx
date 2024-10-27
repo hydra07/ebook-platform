@@ -29,6 +29,7 @@ export interface Book {
   createdAt: string;
   updatedAt: string;
   ratings: Rating[];
+  price: number;
 }
 interface Author {
   _id: string;

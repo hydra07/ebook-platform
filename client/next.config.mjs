@@ -7,6 +7,8 @@ const nextConfig = {
       'marketplace.canva.com',
       'cdn.pixabay.com',
       'res.cloudinary.com',
+      'sandbox.vnpayment.vn',
+      'tracking.ghn.dev',
     ],
   },
   experimental: {
