@@ -119,6 +119,7 @@ export const createOrder = async (userId: string, orderData: IOrderInput): Promi
             },
             shippingFee: orderData.fee,
             paymentMethod: orderData.paymentMethod,
+            paymentStatus: orderData.paymentMethod === PaymentMethod.COD ? PaymentStatus.PENDING : PaymentStatus.PAID
         });
 
         await newOrder.save();

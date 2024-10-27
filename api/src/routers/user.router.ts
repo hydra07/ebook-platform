@@ -40,7 +40,12 @@ router.put(
         return res.status(404).json({ error: "User not found" });
 
       }
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      return res.status(500).json({ error: "Error updating user profile" });
     }
+  }
 );
 
 export default router;
