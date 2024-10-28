@@ -43,7 +43,13 @@ import Link from "next/link";
 
 interface Favourite {
   userId: string;
-  bookId: string;
+  bookId :{
+    _id: string;
+    title: string;
+    bookUrl: string;
+    cover: string;
+  }
+
 }
 
 
@@ -51,7 +57,7 @@ export default function BookDetail({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favourite, setFavourite] = useState<Favourite | null>(null);
+  const [favourite, setFavourite] = useState<Favourite []| null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const { user } = useAuth();
 
@@ -70,21 +76,29 @@ export default function BookDetail({ id }: { id: string }) {
 
     const checkIfFavorite = async () => {
       if (user) {
-        try {
-          const response = await axiosWithAuth(user.accessToken).get(`/favourites`);
-          const favorites = response.data;
-          const isFav = favorites.some((fav: Favourite) => fav.bookId === id);
-          setIsFavorite(isFav);
-        } catch (err) {
-          console.error("Error fetching favorites:", err);
-        }
+          try {
+              const response = await axiosWithAuth(user.accessToken).get(`/favourites`);
+              const favorites: Favourite[] = response.data; // Sử dụng kiểu Favourite đã định nghĩa
+              console.log('favorites: ', favorites);
+              const isFav = favorites.some((fav: Favourite) => fav.bookId._id === id); // Sử dụng bookId._id
+              console.log('isFav: ', isFav);
+              setIsFavorite(isFav);
+          } catch (err) {
+              console.error("Error fetching favorites:", err);
+          }
       }
-    };
+  };
 
     fetchBook();
     checkIfFavorite();
   }, [id, user]);
 
+  // const checkFavourite = () => {
+  //   if (favourite) {
+  //     return favourite.bookId === book?._id; // Kiểm tra bookId có trong favourites không
+  //   }
+  //   return false;
+  // }
   const handleAddToFavorite = async () => {
     try {
       const token = user?.accessToken;
@@ -94,12 +108,14 @@ export default function BookDetail({ id }: { id: string }) {
       }
       if (isFavorite) {
         // Remove from favorites
-        await axiosWithAuth(token).delete(`/favourites/${id}`);
+        const response = await axiosWithAuth(token).delete(`/favourites/${id}`);
+        console.log('response: ', response.data);
         setIsFavorite(false);
         alert("Book removed from favorites!");
       } else {
         // Add to favorites
         const response = await axiosWithAuth(token).post(`/favourites/${id}`);
+        console.log('response: ', response.data);
         setFavourite(response.data);
         setIsFavorite(true);
         alert("Book added to favorites!");
