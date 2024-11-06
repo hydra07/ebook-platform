@@ -14,7 +14,7 @@ interface Book {
   status: string
 }
 
-export default function Component() {
+export default function ListBook() {
   const [books, setBooks] = useState<Book[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
