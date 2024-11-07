@@ -9,7 +9,9 @@ interface UserProfileProps {
   avatar: string;
   email: string;
   _id: string;
+  
 }
+
 
 const UserProfile: React.FC<UserProfileProps> = ({ username, avatar, email, _id }) => {
   const router = useRouter();

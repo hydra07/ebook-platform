@@ -21,5 +21,8 @@ const formSchema = z.object({
   currentQuantity: z.string().refine((val) => !isNaN(parseInt(val)), {
     message: "Current quantity must be a valid number",
   }),
+  priceRead: z.string().refine((val) => !isNaN(parseFloat(val)), {
+    message: "Price read must be a valid number",
+  }),
 });
 export default formSchema;

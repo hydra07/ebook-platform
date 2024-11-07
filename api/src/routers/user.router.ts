@@ -3,49 +3,26 @@ import User from "../models/user.model";
 import { authMiddleware } from "../configs/middleware.config";
 import roleRequire from "../configs/middleware.config";
 import authenticate, { decode, generateToken } from '../services/auth.service';
+import upgradeUserToPremium from "../services/user.service";
 const router = Router();
-router.get("/:id", await roleRequire, async (req: Request, res: Response) => {
+router.put('/upgrade-premium', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = req.userId; // Use req.userId from the roleRequire middleware
-    const user = await User.findById(userId);
+    const userId = req.userId;
+    console.log(userId);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { 'premiumStatus.isPremium': true },
+      { new: true } // Return the updated document
+    );
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.status(200).json(user);
-  } catch (error) {
-    console.error("Error fetching user profile:", error);
-    return res.status(500).json({ error: "Error fetching user profile" });
+    res.status(200).json(updatedUser);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 });
-
-router.put(
-  "/:id",
-  authMiddleware,
-  roleRequire(["user"]),
-  async (req: Request, res: Response) => {
-    try {
-      const userId = req.userId; // Use req.userId from the roleRequire middleware
-      const { username, image } = req.body;
-
-      const updateData = { username, image };
-
-      const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-        new: true,
-        runValidators: true,
-      });
-
-      if (!updatedUser) {
-        return res.status(404).json({ error: "User not found" });
-
-      }
-      return res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      return res.status(500).json({ error: "Error updating user profile" });
-    }
-  }
-);
 
 export default router;

@@ -54,6 +54,10 @@ const userSchema = new Schema(
                 validator: validatePhoneNumber
             }
         },
+        premiumStatus: {
+            isPremium: { type: Boolean, default: false },
+            expiresAt: { type: Date, default: null },
+        },
     },
     { timestamps: true },
 );

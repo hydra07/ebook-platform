@@ -27,13 +27,13 @@ export default function FormBook() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
-    // Check if the user is an admin
-    useEffect(() => {
-      if (!user || !user.role.includes('admin')) {
-        setMessage("You are not authorized to access this page");
-        router.push('/'); // Redirect to home or another page if not admin
-      }
-    }, [user, router]);
+  // Check if the user is an admin
+  useEffect(() => {
+    if (!user || !user.role.includes("admin")) {
+      setMessage("You are not authorized to access this page");
+      router.push("/"); // Redirect to home or another page if not admin
+    }
+  }, [user, router]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,6 +48,7 @@ export default function FormBook() {
       bookUrl: "",
       price: "",
       currentQuantity: "",
+      priceRead: "",
     },
   });
 
@@ -63,9 +64,11 @@ export default function FormBook() {
       const submissionData = {
         ...data,
         price: parseFloat(data.price as unknown as string) || 0,
-        currentQuantity: parseInt(data.currentQuantity as unknown as string) || 0,
+        currentQuantity:
+          parseInt(data.currentQuantity as unknown as string) || 0,
+        priceRead: parseFloat(data.priceRead as unknown as string) || 0,
       };
-      console.log('lol', submissionData);
+      console.log("lol", submissionData);
       const response = await axios.post("/book", submissionData);
       setMessage("Book created successfully!");
       router.push("/admin/listbook");
@@ -172,7 +175,11 @@ export default function FormBook() {
                   </FormItem>
                 )}
               />
-              <Button type="button" onClick={() => remove(index)} variant="destructive">
+              <Button
+                type="button"
+                onClick={() => remove(index)}
+                variant="destructive"
+              >
                 <Trash2 />
               </Button>
             </div>
@@ -255,6 +262,23 @@ export default function FormBook() {
                     {...field}
                     type="number"
                     placeholder="Enter current quantity"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="priceRead"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price to Read</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    placeholder="Enter price to read (0 for free)"
                   />
                 </FormControl>
                 <FormMessage />
