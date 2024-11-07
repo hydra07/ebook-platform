@@ -10,6 +10,7 @@ export interface CheckoutPayload {
     email: string;
     paymentMethod: string;
     address: string;
+    province: string;
     ward: string;
     district: string;
     orderItems: CartItem[];
