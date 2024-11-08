@@ -10,11 +10,18 @@ import { checkoutWithVNPay } from './action';
 import { useServerAction } from 'zsa-react';
 import { toast } from '@/components/ui/use-toast';
 
+interface User{
+  isPremium: boolean;
+}
+
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const [isPremium, setIsPremium] = useState(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const router = useRouter();
+
   const { execute } = useServerAction(checkoutWithVNPay, {
     onSuccess: () => {},
     onError: ({ err }) => {
@@ -29,6 +36,14 @@ const UserProfile = () => {
   useEffect(() => {
     setLoading(!user);
   }, [user]);
+
+
+  // useEffect(() => {
+  //   console.log(userInfo);
+  //   if (userInfo?.isPremium) {
+  //     setIsPremium(true); // Check if user is already premium
+  //   }
+  // }, [userInfo]);
 
   const handleClickPayment = async () => {
     const result = await execute();
@@ -72,28 +87,33 @@ const UserProfile = () => {
 
   return (
     <Card className="w-full max-w-3xl mx-auto mt-8 shadow-lg">
-      <CardHeader className="pb-2">
-        <h1 className="text-2xl font-bold text-gray-800">User Information</h1>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">{user?.name}</h2>
-              <p className="text-gray-500">{user?.email}</p>
-              <p className="text-gray-500">Username: {user?.username}</p>
-              <p className="text-gray-500">Role: {user?.role.join(', ')}</p>
-            </div>
-            <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Additional Information</h3>
+    <CardHeader className="pb-2">
+      <h1 className="text-2xl font-bold text-gray-800">User Information</h1>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-700">{user?.name}</h2>
+            <p className="text-gray-500">{user?.email}</p>
+            <p className="text-gray-500">Username: {user?.username}</p>
+            <p className="text-gray-500">Role: {user?.role.join(', ')}</p>
+            {userInfo?.isPremium && (
+              <span className="text-green-500 font-bold">Premium</span>
+            )}
+          </div>
+          <div className="pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">Additional Information</h3>
+            {!userInfo?.isPremium && ( // Hide button if user is premium
               <Button onClick={handleClickPayment} className="mt-2 bg-blue-600 text-white hover:bg-blue-700 transition duration-200">
                 Upgrade to Premium
               </Button>
-            </div>
+            )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </CardContent>
+  </Card>
   );
 };
 
