@@ -3,7 +3,6 @@ import User from "../models/user.model";
 import { authMiddleware } from "../configs/middleware.config";
 import roleRequire from "../configs/middleware.config";
 import authenticate, { decode, generateToken } from '../services/auth.service';
-import upgradeUserToPremium from "../services/user.service";
 const router = Router();
 router.put('/upgrade-premium', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -25,4 +24,15 @@ router.put('/upgrade-premium', authMiddleware, async (req: Request, res: Respons
   }
 });
 
+router.get('/user-info', authMiddleware, async (req: Request, res: Response) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const decoded = await decode(token);
+  const userId = decoded.id;
+  const user = await User.findById(userId);
+  res.status(200).json(user);
+});
 export default router;

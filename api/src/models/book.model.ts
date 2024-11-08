@@ -63,10 +63,10 @@ const bookSchema = new Schema(
         },
       },
     ],
-    priceRead: {
-      type: Number,
-      default: 0,
-      required: true,
+    forPremium: {
+      type: String,
+      enum:["user", "premium"],
+      default: "user",
     },
   },
   { timestamps: true }

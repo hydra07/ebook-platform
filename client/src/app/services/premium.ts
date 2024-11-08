@@ -14,3 +14,17 @@ export const updateUserPremium = async (userId: string) => {
         throw new Error('Error updateUserPremium');
     }
 }
+
+export const getUserInfo = async () => {
+    try {
+        const {user} = await getServerAuth();
+        if (!user) {
+            throw new Error('User not found');
+        }
+        const response = await axiosWithAuth(user.accessToken).get("/users/user-info");
+        return response.data;
+    } catch (error) {
+        console.log('Error getUserInfo', error);
+        throw new Error('Error getUserInfo');
+    }
+}

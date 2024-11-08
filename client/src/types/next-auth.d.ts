@@ -17,7 +17,6 @@ declare module "next-auth" {
       image:string;
       role: string[];
       accessToken: string;
-      isPremium: boolean;
     }
   }
 }
