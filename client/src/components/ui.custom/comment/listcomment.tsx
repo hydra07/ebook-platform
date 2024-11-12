@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import useAuth from '@/hooks/useAuth';
 import axiosDefault, { axiosWithAuth } from '@/lib/axios';
 import axios from 'axios';
+import { Edit, Reply, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface UserComment {
@@ -38,6 +39,35 @@ export default function ListComment({ objectId }: ListCommentProps) {
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<number[]>([]); // Thay đổi từ null thành mảng
   const [replyContent, setReplyContent] = useState('');
+
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // State to track which comment is being edited
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null); // State to track which reply is being edited
+  const [editingContent, setEditingContent] = useState(''); // State to hold the content for editing
+
+  const [userId, setUserId] = useState<string>('');
+
+  const fetchingUser = async () => {
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    try {
+      const res = await axiosWithAuth(token).get(`/auth/user`);
+      console.log(res.data);
+      if (res.status === 200) setUserId(res.data._id);
+      // console.log('Location update successful:', res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error fetching comment: ',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
 
   const fetchingComment = async () => {
     try {
@@ -121,9 +151,157 @@ export default function ListComment({ objectId }: ListCommentProps) {
     }
   };
 
+  // Function to handle editing a comment
+  const handleEditComment = (commentId: number, content: string) => {
+    setEditingCommentId(commentId);
+    setEditingContent(content);
+  };
+
+  // Function to handle editing a reply
+  const handleEditReply = (
+    commentId: number,
+    replyId: string,
+    content: string,
+  ) => {
+    console.log(commentId);
+    setEditingReplyId(replyId);
+    setEditingContent(content);
+  };
+
+  // Function to submit edited comment
+  const handleEditCommentSubmit = async (
+    e: React.FormEvent,
+    commentId: number,
+  ) => {
+    e.preventDefault();
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    if (!editingContent.trim()) return null;
+    const data = {
+      content: editingContent,
+    };
+    try {
+      const res = await axiosWithAuth(token).put(`/comment/${commentId}`, data);
+      console.log(res.data);
+      if (res.status === 200) {
+        setEditingCommentId(null);
+        setEditingContent('');
+        await fetchingComment();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error editing comment: ',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
+
+  // Function to submit edited reply
+  const handleEditReplySubmit = async (
+    e: React.FormEvent,
+    commentId: number,
+    replyId: string,
+  ) => {
+    e.preventDefault();
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    if (!editingContent.trim()) return null;
+    const data = {
+      content: editingContent,
+      replyId,
+    };
+    try {
+      const res = await axiosWithAuth(token).put(
+        `/comment/reply/${commentId}`,
+        data,
+      );
+      console.log(res.data);
+      if (res.status === 200) {
+        setEditingReplyId(null);
+        setEditingContent('');
+        await fetchingComment();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error editing reply: ',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    try {
+      const res = await axiosWithAuth(token).delete(`/comment/${commentId}`);
+      console.log(res.data);
+      if (res.status === 200) {
+        await fetchingComment();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error deleting comment: ',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
+
+  const handleDeleteReply = async (commentId: number, replyId: string) => {
+    const token = user?.accessToken;
+    if (!token) {
+      console.warn('User not logged in or session information missing');
+      return null;
+    }
+    try {
+      const res = await axiosWithAuth(token).delete(
+        `/comment/reply/${commentId}/${replyId}`,
+      );
+      console.log(res.data);
+      if (res.status === 200) {
+        await fetchingComment();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          'Error deleting reply: ',
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchingComment();
   }, [objectId]);
+
+  useEffect(() => {
+    if (user && user.accessToken) {
+      fetchingUser();
+    }
+  }, [user]);
   // console.log(user);
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,23 +338,72 @@ export default function ListComment({ objectId }: ListCommentProps) {
                 <h3 className="text-xl font-semibold">
                   {comment.userId?.username}
                 </h3>
-                <p className="mt-2 text-gray-700">{comment.content}</p>
+                {editingCommentId === comment._id ? (
+                  <form
+                    onSubmit={(e) => handleEditCommentSubmit(e, comment._id)}
+                    className="mt-2"
+                  >
+                    <Textarea
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      placeholder="Edit your comment..."
+                      className="mb-4 min-h-[80px]"
+                    />
+                    <Button type="submit">Save</Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingCommentId(null);
+                        setEditingContent('');
+                      }}
+                      className="ml-2"
+                    >
+                      Cancel
+                    </Button>
+                  </form>
+                ) : (
+                  <p className="mt-2 text-gray-700">{comment.content}</p>
+                )}
               </div>
             </div>
             {user && user.accessToken && (
               <div>
                 {/* Reply button */}
                 {!replyingTo.includes(comment._id) && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setReplyingTo([...replyingTo, comment._id]);
-                      console.log(comment._id);
-                    }} // Thêm comment.id vào mảng
-                    className="mt-2"
-                  >
-                    Reply
-                  </Button>
+                  <div className="flex flex-row space-x-2">
+                    <button
+                      onClick={() => {
+                        setReplyingTo([...replyingTo, comment._id]);
+                        console.log(comment._id);
+                      }} // Thêm comment.id vào mảng
+                      className="-mt-0.5"
+                    >
+                      <Reply className="mr-2 h-4 w-4" />
+                    </button>
+                    {comment.userId?._id === userId && (
+                      <div>
+                        <button
+                          // variant="outline"
+                          // onClick={() => handleEditComment(comment._id)} // Function to handle editing
+                          className="mt-2"
+                          onClick={() =>
+                            handleEditComment(comment._id, comment.content)
+                          }
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                        </button>
+                        <button
+                          // variant="outline"
+                          // onClick={() => handleDeleteComment(comment._id)} // Function to handle deletion
+                          className="mt-2"
+                          onClick={() => handleDeleteComment(comment._id)}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {/* Reply form */}
@@ -231,9 +458,68 @@ export default function ListComment({ objectId }: ListCommentProps) {
                         <h4 className="text-lg font-semibold">
                           {reply.userId?.username}
                         </h4>
-                        <p className="mt-1 text-gray-600">{reply.content}</p>
+                        {editingReplyId === reply._id ? (
+                          <form
+                            onSubmit={(e) =>
+                              handleEditReplySubmit(e, comment._id, reply._id)
+                            }
+                            className="mt-2"
+                          >
+                            <Textarea
+                              value={editingContent}
+                              onChange={(e) =>
+                                setEditingContent(e.target.value)
+                              }
+                              placeholder="Edit your reply..."
+                              className="mb-4 min-h-[80px]"
+                            />
+                            <Button type="submit">Save</Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                setEditingReplyId(null);
+                                setEditingContent('');
+                              }}
+                              className="ml-2"
+                            >
+                              Cancel
+                            </Button>
+                          </form>
+                        ) : (
+                          <p className="mt-1 text-gray-600">{reply.content}</p>
+                        )}
                       </div>
                     </div>
+
+                    {reply.userId?._id === userId && (
+                      <div className="flex flex-row space-x-2">
+                        <button
+                          // variant="outline"
+                          // onClick={() => handleEditComment(comment._id)} // Function to handle editing
+                          className="mt-2"
+                          onClick={() =>
+                            handleEditReply(
+                              comment._id,
+                              reply._id,
+                              reply.content,
+                            )
+                          }
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                        </button>
+                        <button
+                          // variant="outline"
+                          // onClick={() => handleDeleteComment(comment._id)} // Function to handle deletion
+                          className="mt-2"
+                          onClick={() =>
+                            handleDeleteReply(comment._id, reply._id)
+                          }
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

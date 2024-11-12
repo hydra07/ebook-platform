@@ -58,6 +58,7 @@ export default function EbookViewer({ book }: { book: Book }) {
 
   const { addBookmark, removeBookmark, isBookmarkAdded } = useBookMark({
     viewerRef,
+    bookId: book._id,
   });
 
   const {

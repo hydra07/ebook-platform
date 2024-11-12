@@ -117,5 +117,17 @@ async function verifyToken(
   }
 }
 
+export async function getUser(userId: string): Promise<any> {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found!');
+    }
+    return user;
+  } catch (error: any) {
+    throw new Error(`Get profile failed!,${error}`);
+  }
+}
+
 export default authenticate;
 export { decode, generateToken, refreshToken, verifyToken };

@@ -4,9 +4,14 @@ import axios from 'axios';
 import { useCallback } from 'react';
 import useAuth from '../useAuth';
 import useEbookStore from '../useEbookStore';
-export default function useBookMark({ viewerRef }: any) {
+export default function useBookMark({ viewerRef, bookId}: any) {
   const { bookMarks, setBookMarks, currentLocation } = useEbookStore();
+  // const [readerId,setReaderId] = useState();
   const { user } = useAuth();
+  // if (bookId) return null;
+
+  // useEffect(() => {},[user])
+
 
   const updateBookmark = async (bookmarks: any) => {
     const token = user?.accessToken;
@@ -18,7 +23,7 @@ export default function useBookMark({ viewerRef }: any) {
       bookmarks,
     };
     try {
-      const res = await axiosWithAuth(token).post('/reader/670c963388ce4da4c956dbf7', data);
+      const res = await axiosWithAuth(token).post(`/reader/${bookId}`, data);
       // console.log('Location update successful:', res.data);
       const result = await res.data
       console.log(result)
