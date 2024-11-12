@@ -14,8 +14,10 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ThemeMode } from '../ThemeMode';
 import AuthButton from './auth-button';
+import SearchDialog from './search-dialog';
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false);
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -92,6 +94,7 @@ export default function SideBar() {
                   <UserIcon className="h-4 w-4" />
                   Account Management
                 </Link>
+                <SearchDialog isOpen={isOpenSearch} setOpen={setIsOpenSearch} />
                 <ThemeMode />
               </nav>
             </div>

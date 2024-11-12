@@ -1,7 +1,7 @@
-"use client";
-import { Book } from "@/components/ui.custom/home/listbook";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+'use client';
+import { Book } from '@/components/ui.custom/home/listbook';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,8 +9,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -18,17 +18,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from 'react';
 
 import Rating from './rating';
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import axios, { axiosWithAuth } from '@/lib/axios';
 
-import useAuth from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import {
   BookOpen,
   Calendar,
@@ -37,27 +36,25 @@ import {
   Eye,
   Globe,
   Heart,
-  Share2
-} from "lucide-react";
-import Link from "next/link";
+  Share2,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface Favourite {
   userId: string;
-  bookId :{
+  bookId: {
     _id: string;
     title: string;
     bookUrl: string;
     cover: string;
-  }
-
+  };
 }
-
 
 export default function BookDetail({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favourite, setFavourite] = useState<Favourite []| null>(null);
+  const [favourite, setFavourite] = useState<Favourite[] | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const { user } = useAuth();
 
@@ -68,26 +65,30 @@ export default function BookDetail({ id }: { id: string }) {
         setBook(response.data);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching book:", err);
-        setError("Error fetching book details");
+        console.error('Error fetching book:', err);
+        setError('Error fetching book details');
         setLoading(false);
       }
     };
 
     const checkIfFavorite = async () => {
       if (user) {
-          try {
-              const response = await axiosWithAuth(user.accessToken).get(`/favourites`);
-              const favorites: Favourite[] = response.data; // Sử dụng kiểu Favourite đã định nghĩa
-              console.log('favorites: ', favorites);
-              const isFav = favorites.some((fav: Favourite) => fav.bookId._id === id); // Sử dụng bookId._id
-              console.log('isFav: ', isFav);
-              setIsFavorite(isFav);
-          } catch (err) {
-              console.error("Error fetching favorites:", err);
-          }
+        try {
+          const response = await axiosWithAuth(user.accessToken).get(
+            `/favourites`,
+          );
+          const favorites: Favourite[] = response.data; // Sử dụng kiểu Favourite đã định nghĩa
+          console.log('favorites: ', favorites);
+          const isFav = favorites.some(
+            (fav: Favourite) => fav.bookId._id === id,
+          ); // Sử dụng bookId._id
+          console.log('isFav: ', isFav);
+          setIsFavorite(isFav);
+        } catch (err) {
+          console.error('Error fetching favorites:', err);
+        }
       }
-  };
+    };
 
     fetchBook();
     checkIfFavorite();
@@ -103,7 +104,7 @@ export default function BookDetail({ id }: { id: string }) {
     try {
       const token = user?.accessToken;
       if (!token) {
-        alert("Please login to add to favorites!");
+        alert('Please login to add to favorites!');
         return;
       }
       if (isFavorite) {
@@ -111,18 +112,18 @@ export default function BookDetail({ id }: { id: string }) {
         const response = await axiosWithAuth(token).delete(`/favourites/${id}`);
         console.log('response: ', response.data);
         setIsFavorite(false);
-        alert("Book removed from favorites!");
+        alert('Book removed from favorites!');
       } else {
         // Add to favorites
         const response = await axiosWithAuth(token).post(`/favourites/${id}`);
         console.log('response: ', response.data);
         setFavourite(response.data);
         setIsFavorite(true);
-        alert("Book added to favorites!");
+        alert('Book added to favorites!');
       }
     } catch (err) {
-      console.error("Error toggling favorites:", err);
-      alert("Failed to toggle favorite status.");
+      console.error('Error toggling favorites:', err);
+      alert('Failed to toggle favorite status.');
     }
   };
 
@@ -162,7 +163,9 @@ export default function BookDetail({ id }: { id: string }) {
     return (
       <Alert className="container mx-auto mt-10">
         <AlertTitle>Not Found</AlertTitle>
-        <AlertDescription>The requested book could not be found.</AlertDescription>
+        <AlertDescription>
+          The requested book could not be found.
+        </AlertDescription>
       </Alert>
     );
   }
@@ -172,7 +175,10 @@ export default function BookDetail({ id }: { id: string }) {
       <Breadcrumb>
         <BreadcrumbList className="text-lg">
           <BreadcrumbItem>
-            <BreadcrumbLink href="/" className="text-primary hover:text-primary/80 transition-colors">
+            <BreadcrumbLink
+              href="/"
+              className="text-primary hover:text-primary/80 transition-colors"
+            >
               Home
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -196,13 +202,17 @@ export default function BookDetail({ id }: { id: string }) {
                   alt={book.title}
                 />
                 <div className="mt-6 space-y-4">
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     onClick={handleAddToFavorite}
-                    variant={isFavorite ? "secondary" : "default"}
+                    variant={isFavorite ? 'secondary' : 'default'}
                   >
-                    <Heart className={`w-4 h-4 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
-                    {isFavorite ? "Added to Favorites" : "Add to Favorites"}
+                    <Heart
+                      className={`w-4 h-4 mr-2 ${
+                        isFavorite ? 'fill-current' : ''
+                      }`}
+                    />
+                    {isFavorite ? 'Added to Favorites' : 'Add to Favorites'}
                   </Button>
                   <Button asChild className="w-full" variant="default">
                     <Link href={`/ebook/${book._id}`}>
@@ -217,26 +227,26 @@ export default function BookDetail({ id }: { id: string }) {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-8 md:w-2/3">
               <div className="flex flex-wrap gap-2 mb-4">
                 {book.category.map((c) => (
-                  <Badge 
-                    key={c.name} 
-                    variant="secondary" 
+                  <Badge
+                    key={c.name}
+                    variant="secondary"
                     className="text-sm dark:bg-gray-700 dark:text-gray-200"
                   >
                     {c.name}
                   </Badge>
                 ))}
               </div>
-              
+
               <CardTitle className="text-4xl font-bold mb-3 text-gray-800 dark:text-gray-100">
                 {book.title}
               </CardTitle>
-              
+
               <CardDescription className="text-xl mb-6 flex items-center text-gray-600 dark:text-gray-300">
-                by{" "}
+                by{' '}
                 <span className="font-medium text-primary dark:text-primary/80 ml-1">
                   {book.author.name}
                 </span>
@@ -264,41 +274,54 @@ export default function BookDetail({ id }: { id: string }) {
               </div> */}
               <Rating bookId={book._id} ratings={book.ratings} />
               <p className="text-muted-foreground mb-6">{book.description}</p>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <span className="mx-2 dark:text-gray-400">•</span>
-                <Eye className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                <span className="ml-1 text-gray-600 dark:text-gray-400">{book.views} views</span>
+              <div className="flex items-center space-x-2 mb-6">
+                <Eye className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <span className="text-gray-600 dark:text-gray-400 font-semibold">
+                  {book.views} views
+                </span>
               </div>
-              
+
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-8 text-lg">
                 {book.description}
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
                 <InfoItem
-                  icon={<BookOpen className="w-5 h-5 text-primary dark:text-primary/80" />}
+                  icon={
+                    <BookOpen className="w-5 h-5 text-primary dark:text-primary/80" />
+                  }
                   label="Status"
-                  value={<span className="font-medium text-primary dark:text-primary/80">{book.status}</span>}
+                  value={
+                    <span className="font-medium text-primary dark:text-primary/80">
+                      {book.status}
+                    </span>
+                  }
                 />
                 <InfoItem
-                  icon={<DollarSign className="w-5 h-5 text-primary dark:text-primary/80" />}
+                  icon={
+                    <DollarSign className="w-5 h-5 text-primary dark:text-primary/80" />
+                  }
                   label="Price"
                   value={
                     <span className="font-medium text-primary dark:text-primary/80">
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
                       }).format(book.price)}
                     </span>
                   }
                 />
                 <InfoItem
-                  icon={<Calendar className="w-5 h-5 text-primary dark:text-primary/80" />}
+                  icon={
+                    <Calendar className="w-5 h-5 text-primary dark:text-primary/80" />
+                  }
                   label="Published"
                   value={new Date(book.createdAt).toLocaleDateString()}
                 />
                 <InfoItem
-                  icon={<Clock className="w-5 h-5 text-primary dark:text-primary/80" />}
+                  icon={
+                    <Clock className="w-5 h-5 text-primary dark:text-primary/80" />
+                  }
                   label="Updated"
                   value={new Date(book.updatedAt).toLocaleDateString()}
                 />
@@ -310,7 +333,9 @@ export default function BookDetail({ id }: { id: string }) {
 
       <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 dark:shadow-gray-800/10 dark:border-gray-800">
         <CardHeader>
-          <CardTitle className="text-2xl dark:text-gray-100">About the Author</CardTitle>
+          <CardTitle className="text-2xl dark:text-gray-100">
+            About the Author
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex items-start space-x-6">
           <Avatar className="w-24 h-24 border-2 border-gray-200 dark:border-gray-700">
@@ -322,9 +347,11 @@ export default function BookDetail({ id }: { id: string }) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">{book.author.name}</h3>
+            <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">
+              {book.author.name}
+            </h3>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              {book.author.description || "No description available"}
+              {book.author.description || 'No description available'}
             </p>
           </div>
         </CardContent>
@@ -369,7 +396,9 @@ function InfoItem({
   return (
     <div className="flex items-center space-x-3 text-base">
       {icon}
-      <span className="font-medium text-gray-700 dark:text-gray-300">{label}:</span>
+      <span className="font-medium text-gray-700 dark:text-gray-300">
+        {label}:
+      </span>
       <span className="text-gray-600 dark:text-gray-400">{value}</span>
     </div>
   );

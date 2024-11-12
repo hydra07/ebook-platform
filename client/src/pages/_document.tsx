@@ -6,7 +6,7 @@ export default function Document() {
       <Head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Reader</title>
+        {/* <title>Reader</title> */}
         <meta
           name="description"
           content="This is a global description for all pages"

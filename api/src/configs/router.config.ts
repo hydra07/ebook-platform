@@ -4,7 +4,7 @@ import authRouter from '../routers/auth.router';
 import commentRouter from '../routers/comment.router';
 import favouriteRouter from '../routers/favourite.router';
 import fileRouter from '../routers/file.router';
-import newBookRouter from '../routers/newBook.router';
+import newBookRouter from '../routers/book.router';
 import notificationRouter from '../routers/notification.router';
 import orderRouter from '../routers/order.router';
 import ratingRouter from '../routers/rating.router';

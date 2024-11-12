@@ -13,6 +13,7 @@ export interface Highlight {
   chapterName: string;
   pageNum: number;
   lastAccess?: string;
+  takeNote?: string;
 }
 
 interface Page {

@@ -1,6 +1,7 @@
 import '@/app/globals.css';
 import SessionWrapper from '@/components/SessionWrapper';
 import EbookViewer from '@/components/ui.custom/ebook';
+import UserWrapper from '@/components/UserWrapper';
 import axios from '@/lib/axios';
 import axiosDefault from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -56,7 +57,9 @@ export default function Ebook({ book }: { book: any }) {
             enableSystem
             disableTransitionOnChange
           >
-            <EbookViewer book={book} />
+            <UserWrapper>
+              <EbookViewer book={book} />
+            </UserWrapper>
           </ThemeProvider>
         </SessionWrapper>
       </>

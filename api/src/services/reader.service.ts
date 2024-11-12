@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Book from '../models/book.model';
 import Reader from '../models/reader.model';
 
 const validateIds = (...ids: string[]) => {
@@ -27,7 +28,14 @@ export async function getOrCreateReader(userId: string, bookId: string) {
       });
       await reader.save();
     }
+    try {
 
+      await Book.findByIdAndUpdate(bookId, { $inc: { views: 1 } });
+      const _book = await Book.findById(bookId);
+      console.log(_book)
+    } catch(e:any){
+      console.log(e.message)
+    }
     return reader;
   } catch (error) {
     console.error('Error in getOrCreateReader:', error);
