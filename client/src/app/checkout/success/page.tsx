@@ -57,7 +57,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/dashboard/purchase">
+                <Link href="/purchase">
                   Xem đơn hàng
                 </Link>
               </Button>

@@ -95,7 +95,7 @@ export default function useSelection({
 
       const newSelection = {
         ...selection,
-        ...(color.code ? { color: color.code } : {}), // Chỉ cập nhật color nếu color.code không trống
+        ...(color && color.code ? { color: color.code } : {}), // Chỉ cập nhật color nếu color.code không trống
         ...(note && note.trim() ? { takeNote: note } : {}), // Cập nhật note nếu note không trống
       };
       console.log('newSelection: ', newSelection);

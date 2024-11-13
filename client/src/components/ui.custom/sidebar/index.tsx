@@ -2,7 +2,7 @@
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { HomeIcon, MenuIcon, UserIcon, UsersIcon, XIcon } from 'lucide-react';
+import { HomeIcon, MenuIcon, ShoppingCartIcon, UserIcon, UsersIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ThemeMode } from '../ThemeMode';
@@ -91,7 +91,12 @@ export default function SideBar() {
                   <UserIcon className="h-4 w-4" />
                   Account Management
                 </Link>
+                
                 <SearchDialog isOpen={isOpenSearch} setOpen={setIsOpenSearch} />
+                <Link href="/shop" className="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:bg-accent hover:text-accent-foreground">
+                  <ShoppingCartIcon className="h-4 w-4" />
+                  Shop
+                </Link>
                 <ThemeMode />
               </nav>
             </div>

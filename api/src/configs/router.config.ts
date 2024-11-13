@@ -12,6 +12,7 @@ import readerRouter from '../routers/reader.router';
 import settingRouter from '../routers/setting.router';
 import shopRouter from '../routers/shop.router';
 import userRouter from '../routers/user.router';
+import postRouter from '../routers/post.router';
 
 interface IRouterConfig {
   path: string;
@@ -76,4 +77,8 @@ export default [
     path: '/api/orders',
     router: orderRouter,
   },
+  {
+    path: '/api/post',
+    router: postRouter,
+  }
 ] as IRouterConfig[];
