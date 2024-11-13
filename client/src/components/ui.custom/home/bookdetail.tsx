@@ -49,13 +49,19 @@ interface Favourite {
     cover: string;
   };
 }
-
+interface UserInfor{
+  premiumStatus:{
+    isPremium:boolean;
+    expiryDate:Date;
+  }
+}
 export default function BookDetail({ id }: { id: string }) {
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [favourite, setFavourite] = useState<Favourite[] | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfor | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -89,9 +95,18 @@ export default function BookDetail({ id }: { id: string }) {
         }
       }
     };
+    const fetchUserInfo = async () => {
+      const token = user?.accessToken;
+      if (!token) {
+        return;
+      }
+      const response = await axiosWithAuth(token).get("/users/user-info");
+      setUserInfo(response.data);
+    };
 
     fetchBook();
     checkIfFavorite();
+    fetchUserInfo();
   }, [id, user]);
 
   // const checkFavourite = () => {
@@ -214,12 +229,19 @@ export default function BookDetail({ id }: { id: string }) {
                     />
                     {isFavorite ? 'Added to Favorites' : 'Add to Favorites'}
                   </Button>
-                  <Button asChild className="w-full" variant="default">
-                    <Link href={`/ebook/${book._id}`}>
+                  {book.forPremium === "premium" && !userInfo?.premiumStatus.isPremium ? (
+                    <Button variant="default" className="w-full" disabled>
                       <Globe className="w-4 h-4 mr-2" />
-                      Read Book
-                    </Link>
-                  </Button>
+                      You need a premium account to read this book
+                    </Button>
+                  ) : (
+                    <Button asChild className="w-full" variant="default">
+                      <Link href={`/ebook/${book._id}`}>
+                        <Globe className="w-4 h-4 mr-2" />
+                        Read Book
+                      </Link>
+                    </Button>
+                  )}
                   <Button variant="outline" className="w-full">
                     <Share2 className="w-4 h-4 mr-2" />
                     Share

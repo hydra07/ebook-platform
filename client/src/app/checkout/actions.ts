@@ -70,13 +70,14 @@ export const checkoutWithVNPay = authenticatedAction
       if (totalAmount <= 0) {
         throw new Error("Total amount must be greater than zero");
       }
+      console.log(input, 'input');
       const orderId = moment().format("DDHHmmss");
       const vnpayUrl = vnpay.buildPaymentUrl({
         vnp_Amount: totalAmount,
         vnp_IpAddr: getClientIp(),
         vnp_TxnRef: orderId,
         vnp_OrderInfo: `Payment for order ${orderId}`,
-        vnp_ReturnUrl: `${process.env.HOST_NAME}/vnpay-return`,
+        vnp_ReturnUrl: `${process.env.NEXTAUTH_URL}/vnpay-return`,
       });
 
       return { success: true, redirectUrl: vnpayUrl };

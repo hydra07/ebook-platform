@@ -22,18 +22,20 @@ import { Spinner } from "@/components/ui/spinner";
 import { env } from "@/lib/validateEnv";
 import { Trash2, Plus } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
+
 export default function FormBook() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
-    // Check if the user is an admin
-    useEffect(() => {
-      if (!user || !user.role.includes('admin')) {
-        setMessage("You are not authorized to access this page");
-        router.push('/'); // Redirect to home or another page if not admin
-      }
-    }, [user, router]);
+
+  // Check if the user is an admin
+  useEffect(() => {
+    if (!user || !user.role.includes("admin")) {
+      setMessage("You are not authorized to access this page");
+      router.push("/"); // Redirect to home or another page if not admin
+    }
+  }, [user, router]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,6 +50,7 @@ export default function FormBook() {
       bookUrl: "",
       price: "",
       currentQuantity: "",
+      forPremium: "", // Default value for forPremium
     },
   });
 
@@ -63,9 +66,10 @@ export default function FormBook() {
       const submissionData = {
         ...data,
         price: parseFloat(data.price as unknown as string) || 0,
-        currentQuantity: parseInt(data.currentQuantity as unknown as string) || 0,
+        currentQuantity:
+          parseInt(data.currentQuantity as unknown as string) || 0,
       };
-      console.log('lol', submissionData);
+      console.log("lol", submissionData);
       const response = await axios.post("/book", submissionData);
       setMessage("Book created successfully!");
       router.push("/admin/listbook");
@@ -172,7 +176,11 @@ export default function FormBook() {
                   </FormItem>
                 )}
               />
-              <Button type="button" onClick={() => remove(index)} variant="destructive">
+              <Button
+                type="button"
+                onClick={() => remove(index)}
+                variant="destructive"
+              >
                 <Trash2 />
               </Button>
             </div>
@@ -217,7 +225,7 @@ export default function FormBook() {
                     {...field}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="">Select status</option>
+                    <option value="">Select Status</option>
                     <option value="ONGOING">Ongoing</option>
                     <option value="COMPLETED">Completed</option>
                     <option value="DISCONTINUED">Discontinued</option>
@@ -261,6 +269,27 @@ export default function FormBook() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="forPremium"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>For Premium Users</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select</option>
+                    <option value="user">User</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+         
           <Button
             type="submit"
             disabled={loading}

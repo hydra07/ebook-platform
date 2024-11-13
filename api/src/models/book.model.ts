@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
 const bookSchema = new Schema(
   {
     title: {
@@ -21,8 +21,8 @@ const bookSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['ONGOING', 'COMPLETED', 'DISCONTINUED'], // Example status options, adjust as needed
-      default: 'ONGOING',
+      enum: ["ONGOING", "COMPLETED", "DISCONTINUED"], // Example status options, adjust as needed
+      default: "ONGOING",
     },
     bookUrl: {
       type: String,
@@ -31,7 +31,7 @@ const bookSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: 'Author',
+      ref: "Author",
       required: true,
     },
     // author: {
@@ -46,6 +46,7 @@ const bookSchema = new Schema(
     //     trim: true,
     //   }
     // },
+
     ratings: [
       {
         userId: {
@@ -61,6 +62,7 @@ const bookSchema = new Schema(
         },
       },
     ],
+
     price: {
       type: Number,
       required: true,
@@ -70,6 +72,7 @@ const bookSchema = new Schema(
       default: 0,
       required: true,
     },
+
     category: [
       {
         name: {
@@ -77,10 +80,15 @@ const bookSchema = new Schema(
         },
       },
     ],
+    forPremium: {
+      type: String,
+      enum:["user", "premium"],
+      default: "user",
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 const Book =
   // mongoose.models.Reader ||
-  mongoose.model('Book', bookSchema);
+  mongoose.model("Book", bookSchema);
 export default Book;
