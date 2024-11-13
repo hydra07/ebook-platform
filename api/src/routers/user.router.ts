@@ -35,4 +35,15 @@ router.get('/user-info', authMiddleware, async (req: Request, res: Response) => 
   const user = await User.findById(userId);
   res.status(200).json(user);
 });
+
+router.put('/update-user', authMiddleware, async (req: Request, res: Response) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  const decoded = await decode(token);
+  const userId = decoded.id;
+  const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
+  res.status(200).json(updatedUser);
+});
 export default router;

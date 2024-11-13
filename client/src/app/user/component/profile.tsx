@@ -6,19 +6,23 @@ import { axiosWithAuth } from '@/lib/axios';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Crown, Mail, User2, Shield, Calendar } from 'lucide-react';
 import { checkoutWithVNPay } from './action';
 import { useServerAction } from 'zsa-react';
 import { toast } from '@/components/ui/use-toast';
 
-interface User{
-  isPremium: boolean;
+interface User {
+  premiumStatus: {
+    isPremium: boolean;
+    expiresAt: Date;
+  };
 }
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const [isPremium, setIsPremium] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const router = useRouter();
 
@@ -34,16 +38,15 @@ const UserProfile = () => {
   });
 
   useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = user?.accessToken;
+      if (!token) return;
+      const response = await axiosWithAuth(token).get("/users/user-info");
+      setUserInfo(response.data);
+    };
+    fetchUserInfo();
     setLoading(!user);
   }, [user]);
-
-
-  // useEffect(() => {
-  //   console.log(userInfo);
-  //   if (userInfo?.isPremium) {
-  //     setIsPremium(true); // Check if user is already premium
-  //   }
-  // }, [userInfo]);
 
   const handleClickPayment = async () => {
     const result = await execute();
@@ -75,45 +78,104 @@ const UserProfile = () => {
     return (
       <Card className="w-full max-w-3xl mx-auto mt-8 border-red-200 bg-red-50">
         <CardContent className="pt-6">
-          <p className="text-red-500">{error}</p>
+          <div className="flex items-center space-x-2 text-red-500">
+            <Shield className="h-5 w-5" />
+            <p>{error}</p>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
   if (!user) {
-    return <p>User not found</p>;
+    return (
+      <Card className="w-full max-w-3xl mx-auto mt-8 p-6">
+        <p className="text-center text-gray-500">User not found</p>
+      </Card>
+    );
   }
 
   return (
     <Card className="w-full max-w-3xl mx-auto mt-8 shadow-lg">
-    <CardHeader className="pb-2">
-      <h1 className="text-2xl font-bold text-gray-800">User Information</h1>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-700">{user?.name}</h2>
-            <p className="text-gray-500">{user?.email}</p>
-            <p className="text-gray-500">Username: {user?.username}</p>
-            <p className="text-gray-500">Role: {user?.role.join(', ')}</p>
-            {userInfo?.isPremium && (
-              <span className="text-green-500 font-bold">Premium</span>
-            )}
+      <CardHeader className="pb-2 border-b">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-800">Profile Dashboard</h1>
+          {userInfo?.premiumStatus.isPremium && (
+            <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500">
+              <Crown className="w-4 h-4 mr-1" />
+              Premium Member
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          {/* User Basic Info Section */}
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 flex-1">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Account Information</h2>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <User2 className="h-5 w-5 text-blue-500" />
+                  <span className="text-gray-700">{user.name}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-5 w-5 text-blue-500" />
+                  <span className="text-gray-700">{user.email}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <User2 className="h-5 w-5 text-blue-500" />
+                  <span className="text-gray-700">@{user.username}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Membership Status Section */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 flex-1">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Membership Status</h2>
+              {userInfo?.premiumStatus.isPremium ? (
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Crown className="h-5 w-5 text-amber-500" />
+                    <span className="text-gray-700">Premium Active</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-5 w-5 text-amber-500" />
+                    <span className="text-gray-700">
+                      Expires: {new Date(userInfo.premiumStatus.expiresAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-gray-600">Upgrade to Premium to unlock all features!</p>
+                  <Button 
+                    onClick={handleClickPayment} 
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Upgrade to Premium
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="pt-4 border-t border-gray-200">
-            <h3 className="text-lg font-medium text-gray-700 mb-2">Additional Information</h3>
-            {!userInfo?.isPremium && ( // Hide button if user is premium
-              <Button onClick={handleClickPayment} className="mt-2 bg-blue-600 text-white hover:bg-blue-700 transition duration-200">
-                Upgrade to Premium
-              </Button>
-            )}
+
+          {/* Role Section */}
+          <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Role & Permissions</h2>
+            <div className="flex flex-wrap gap-2">
+              {user.role.map((role: string) => (
+                <Badge key={role} className="bg-green-100 text-green-800 hover:bg-green-200">
+                  <Shield className="w-4 h-4 mr-1" />
+                  {role}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
+      </CardContent>
+    </Card>
   );
 };
 
