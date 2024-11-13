@@ -1,5 +1,4 @@
 'use client';
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
@@ -8,20 +7,54 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 import useEbookStore from '@/hooks/useEbookStore';
 import { Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function Context({
   selection,
+  setSelection,
   onHighlight,
   onRemoveHighlight,
   isOpen,
   setIsOpen,
-}: any) {
+}: // takeNote,
+// setTakeNote,
+any) {
   const { highlights, color } = useEbookStore();
+  // const [textNote, setTextNote] = useState<string>('');
+
+  const [note, setNote] = useState<string>('');
+  const [debouncedNote, setDebouncedNote] = useState<string>(note);
+
+  useEffect(() => {
+    console.log('chay cai nayf nek');
+    if (selection) {
+      setNote(selection.takeNote || '');
+    }
+  }, [selection]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedNote(note);
+    }, 300); // Thay đổi thời gian debounce nếu cần
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [note]);
+
+  useEffect(() => {
+    console.log('sss');
+    if (selection) {
+      onHighlight(selection.color, debouncedNote); // Gọi onHighlight với debouncedNote
+    }
+  }, [debouncedNote, selection?.color]);
 
   if (!selection) return null;
 
+  //khi tắt dialog thì set clear takeNote
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
@@ -51,6 +84,18 @@ export default function Context({
             <p className="text-sm text-gray-600 mb-2">
               "{selection.content?.substring(0, 100)}..."
             </p>
+            <Textarea
+              value={note}
+              onChange={(e) => {
+                // setSelection({ ...selection, takeNote: e.target.value });
+                // console.log('color: ', selection.color);
+                // onHighlight(selection.color, e.target.value);
+                setNote(e.target.value);
+                // console.log('note: ', selection.takeNote);
+              }}
+              placeholder="Add a note..."
+              className="w-full"
+            />
             {highlights.find((item) => item.key === selection?.key) && (
               <Button
                 variant="destructive"

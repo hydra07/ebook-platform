@@ -37,6 +37,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [book, setBook] = useState<z.infer<typeof FormSchema> | null>(null);
+  const [categories, setCategories] = useState<{ name: string }[]>([]);
 
   useEffect(() => {
     fetchBook();
@@ -67,20 +68,30 @@ export default function EditBook({ params }: { params: { id: string } }) {
   };
 
   const handleCategoryChange = (value: string, index: number) => {
-    const updatedCategories = form.getValues("category") || [];
-    updatedCategories[index] = { name: value };
+    // const updatedCategories = form.getValues("category") || [];
+    // updatedCategories[index] = { name: value };
+    // form.setValue("category", updatedCategories);
+    const updatedCategories = [...categories]; // Tạo một bản sao của mảng categories
+    updatedCategories[index] = { name: value }; // Cập nhật giá trị mới
+    setCategories(updatedCategories); // Cập nhật state với mảng mới
     form.setValue("category", updatedCategories);
   };
 
   const addCategory = () => {
-    const updatedCategories = form.getValues("category") || [];
-    updatedCategories.push({ name: "" });
-    form.setValue("category", updatedCategories);
+    // const updatedCategories = form.getValues("category") || [];
+    // updatedCategories.push({ name: "" });
+    // form.setValue("category", updatedCategories);
+    setCategories([...categories, { name: "" }]);
+    form.setValue("category", categories);
   };
 
   const removeCategory = (index: number) => {
-    const updatedCategories = form.getValues("category") || [];
-    updatedCategories.splice(index, 1); // Remove the category at the specified index
+    // const updatedCategories = form.getValues("category") || [];
+    // updatedCategories.splice(index, 1); // Remove the category at the specified index
+    // form.setValue("category", updatedCategories);
+    const updatedCategories = categories.filter((_, i) => i !== index);
+    setCategories(updatedCategories);
+    console.log(updatedCategories);
     form.setValue("category", updatedCategories);
   };
 
@@ -92,7 +103,8 @@ export default function EditBook({ params }: { params: { id: string } }) {
       const submissionData = {
         ...data,
         price: parseFloat(data.price as unknown as string) || 0,
-        currentQuantity: parseInt(data.currentQuantity as unknown as string) || 0,
+        currentQuantity:
+          parseInt(data.currentQuantity as unknown as string) || 0,
       };
       const response = await axios.put(`/book/${params.id}`, submissionData);
       console.log("Response from API:", response.data); // Kiểm tra phản hồi từ API
@@ -104,7 +116,9 @@ export default function EditBook({ params }: { params: { id: string } }) {
       setIsLoading(false);
     }
   };
-
+  useEffect(() => {
+    setCategories(book?.category || []);
+  }, [book]);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -270,7 +284,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
           </div>
           <div>
             <FormLabel>Categories</FormLabel>
-            {form.getValues("category")?.map((cat, index) => (
+            {categories?.map((cat, index) => (
               <div key={index} className="flex items-center space-x-2 mb-2">
                 <input
                   type="text"

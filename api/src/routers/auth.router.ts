@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import roleRequire from '../configs/middleware.config';
-import authenticate, { decode, generateToken } from '../services/auth.service';
+import authenticate, {
+  decode,
+  generateToken,
+  getUser,
+} from '../services/auth.service';
 
 const router = Router();
 
@@ -35,4 +39,11 @@ router.get('/decode/:token', async (req, res) => {
   const result = await decode(token);
   return res.json(result);
 });
+
+router.get('/user', roleRequire(), async (req, res) => {
+  const userId = req.userId as string;
+  const user = await getUser(userId);
+  return res.json(user);
+});
+
 export default router;

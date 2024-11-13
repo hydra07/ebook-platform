@@ -7,15 +7,23 @@ const router = Router();
 
 router.post("/:bookId", roleRequire(), async (req: Request, res: Response) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "No token provided" });
-        }
+        // const token = req.headers.authorization?.split(" ")[1];
+        // if (!token) {
+        //     return res.status(401).json({ message: "No token provided" });
+        // }
 
-        const decoded = await decode(token);
-        const userId = decoded.id;
+        // const decoded = await decode(token);
+        // const userId = decoded.id;
+        const userId = req.userId;
         const { bookId } = req.params;
-
+        if (!bookId) {
+            return res.status(400).json({ message: "Book ID is required" });
+        }
+        const favourite = await Favourite.findOne({ userId, bookId });
+        if (favourite) {
+            return res.status(400).json({ message: "Book already in favourites" });
+        }
+        
         const newFavourite = new Favourite({ userId, bookId });
         await newFavourite.save();
 
@@ -28,14 +36,14 @@ router.post("/:bookId", roleRequire(), async (req: Request, res: Response) => {
 
 router.get("/", roleRequire(), async (req: Request, res: Response) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "No token provided" });
-        }
+        // const token = req.headers.authorization?.split(" ")[1];
+        // if (!token) {
+        //     return res.status(401).json({ message: "No token provided" });
+        // }
 
-        const decoded = await decode(token);
-        const userId = decoded.id;
-
+        // const decoded = await decode(token);
+        // const userId = decoded.id;
+        const userId = req.userId;
         const favourites = await Favourite.find({ userId })
             .populate({
                 path: 'bookId',
@@ -51,13 +59,14 @@ router.get("/", roleRequire(), async (req: Request, res: Response) => {
 
 router.delete("/:bookId", roleRequire(), async (req: Request, res: Response) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "No token provided" });
-        }
+        // const token = req.headers.authorization?.split(" ")[1];
+        // if (!token) {
+        //     return res.status(401).json({ message: "No token provided" });
+        // }
 
-        const decoded = await decode(token);
-        const userId = decoded.id;
+        // const decoded = await decode(token);
+        // const userId = decoded.id;
+        const userId = req.userId;
         const { bookId } = req.params;
 
         const result = await Favourite.findOneAndDelete({ userId, bookId });

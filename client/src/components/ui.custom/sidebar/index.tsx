@@ -2,20 +2,15 @@
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import {
-  BookIcon,
-  HomeIcon,
-  MenuIcon,
-  UserIcon,
-  UsersIcon,
-  XIcon,
-} from 'lucide-react';
+import { HomeIcon, MenuIcon, UserIcon, UsersIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ThemeMode } from '../ThemeMode';
 import AuthButton from './auth-button';
+import SearchDialog from './search-dialog';
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false);
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -56,14 +51,18 @@ export default function SideBar() {
             <XIcon className="h-6 w-6" />
           </button>
           <div className="flex flex-col h-full">
-            <div className="flex h-[80px] items-center border-b px-6">
+            <div className="flex h-[120px] items-center border-b px-6">
               <Link
                 href="/"
-                className="flex items-center gap-2 font-semibold text-mainforeground"
+                className="flex items-center gap-2 font-semibold text-mainforeground flex-row"
                 prefetch={false}
               >
-                <BookIcon className="h-16 w-16" />
-                <span className="text-lg">Ebook</span>
+                {/* <BookIcon className="h-16 w-16" /> */}
+                <img
+                  src="/logo.png"
+                  className="w-24 h-24 rounded-full dark:invert bg-transparent"
+                />
+                <span className="text-lg text-balance">Ebook platform</span>
               </Link>
             </div>
             <div className="flex-1 overflow-auto py-2">
@@ -92,6 +91,7 @@ export default function SideBar() {
                   <UserIcon className="h-4 w-4" />
                   Account Management
                 </Link>
+                <SearchDialog isOpen={isOpenSearch} setOpen={setIsOpenSearch} />
                 <ThemeMode />
               </nav>
             </div>

@@ -8,7 +8,18 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import useAuth from '../useAuth';
 import useEbookStore, { Color, Highlight } from '../useEbookStore';
-export default function useSelection({ viewerRef, onLocationChange }: any) {
+
+interface UseSelectionProps {
+  viewerRef: any;
+  onLocationChange: (cfi: string) => void;
+  // takeNote?:string;
+  // setTakeNote?:(note:string)=>void;
+}
+
+export default function useSelection({
+  viewerRef,
+  onLocationChange,
+}: UseSelectionProps) {
   const {
     currentLocation,
     setCurrentLocation,
@@ -19,6 +30,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
   } = useEbookStore();
   const { user } = useAuth();
   const [selection, setSelection] = useState<Highlight | null>(null);
+  // const [takeNote, setTakeNote] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
 
   const updateHighlights = async (_highlights: any) => {
@@ -68,7 +80,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
         createAt: timeFormatter(new Date()),
         chapterName: currentLocation.chapterName,
         pageNum: currentLocation.currentPage,
-        // note: '',
+        takeNote: '',
       });
       console.log('ls', highlights);
       setOpen(true);
@@ -77,13 +89,16 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
   );
 
   const onHighlight = useCallback(
-    async (color: Color) => {
+    async (color: Color, note?: string) => {
       if (!viewerRef.current) return;
       if (!selection) return;
+
       const newSelection = {
         ...selection,
-        color: color.code,
+        ...(color.code ? { color: color.code } : {}), // Chỉ cập nhật color nếu color.code không trống
+        ...(note && note.trim() ? { takeNote: note } : {}), // Cập nhật note nếu note không trống
       };
+      console.log('newSelection: ', newSelection);
       setSelection(newSelection);
 
       const updatedHighlights = (() => {
@@ -134,7 +149,6 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
     setOpen(true);
     setSelection(highlight);
   }, []);
-
   // const contextItem = useCallback(() => {
   //   if (!selection) return null;
   //   return (
@@ -179,6 +193,7 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
 
   return {
     selection,
+    setSelection,
     onSelection,
     onHighlight,
     onRemoveHighlight,
@@ -186,6 +201,8 @@ export default function useSelection({ viewerRef, onLocationChange }: any) {
     open,
     goToHighLight,
     onHighlightClick,
+    // takeNote,
+    // setTakeNote,
     // listHighLight,
   };
 }

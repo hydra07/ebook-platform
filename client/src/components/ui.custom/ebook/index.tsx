@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { ReactEpubViewer as ReactViewer } from 'react-epub-viewer';
 import 'regenerator-runtime/runtime';
 // import ReactViewer from '@/modules/Reader';
+import { Book } from '@/components/ui.custom/home/listbook';
 import useBookMark from '@/hooks/ebook/useBookmark';
 import UseInitBook from '@/hooks/ebook/useInitBook';
 import useSelection from '@/hooks/ebook/useSelection';
-import { Book } from '@/components/ui.custom/home/listbook';
 import Context from './context';
 import Footer from './footer';
 import Header from './header';
@@ -58,10 +58,12 @@ export default function EbookViewer({ book }: { book: Book }) {
 
   const { addBookmark, removeBookmark, isBookmarkAdded } = useBookMark({
     viewerRef,
+    bookId: book._id,
   });
 
   const {
     selection,
+    setSelection,
     setOpen,
     open,
     onSelection,
@@ -69,6 +71,8 @@ export default function EbookViewer({ book }: { book: Book }) {
     onRemoveHighlight,
     goToHighLight,
     onHighlightClick,
+    // takeNote,
+    // setTakeNote,
   } = useSelection({
     viewerRef,
     onLocationChange,
@@ -105,6 +109,7 @@ export default function EbookViewer({ book }: { book: Book }) {
       />
       <Context
         selection={selection}
+        setSelection={setSelection}
         onRemoveHighlight={onRemoveHighlight}
         isOpen={open}
         setIsOpen={setOpen}

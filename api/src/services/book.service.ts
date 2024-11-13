@@ -8,6 +8,10 @@ interface QueryOptions {
   sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'views'; // Added sorting fields
   sortOrder?: 'asc' | 'desc';
 }
+// export interface ExtendedBook extends InstanceType<typeof Book> {
+//   averageRating?: number; // Rating trung bình
+//   totalRatings?: number; // Tổng số đánh giá
+// }
 
 export async function newBook(data: any): Promise<InstanceType<typeof Book>> {
   let author = await Author.findOne({ name: data.author_name });
@@ -85,10 +89,12 @@ export async function getBook(
     total,
   };
 }
-export async function getBookById(
-  id: string,
-): Promise<InstanceType<typeof Book> | null> {
+export async function getBookById(id: string): Promise<InstanceType<typeof Book> | null> {
   const book = await Book.findById(id).populate('author');
+  if (!book) {
+    return null;
+  }
+
   return book; // Trả về sách tìm thấy hoặc null nếu không tìm thấy
 }
 export async function getAllCategories(): Promise<
@@ -108,6 +114,49 @@ export async function getAllCategories(): Promise<
 export async function getAllAuthor() {
   const author = await Author.find();
   return await author;
+}
+// rating
+export async function ratingBook(
+  userId: string,
+  bookId: string,
+  score: number,
+) {
+  const book = await getBookById(bookId);
+  if (!book) {
+    throw new Error('Book not found');
+  }
+  const existingRatingIndex = book.ratings.findIndex(
+    (rating) => rating.userId.toString() === userId,
+  );
+
+  if (existingRatingIndex !== -1) {
+    if (score === 0) {
+      // Nếu đã đánh giá và score = 0, xóa đánh giá
+      book.ratings.splice(existingRatingIndex, 1);
+    } else {
+      // Nếu đã đánh giá và có điểm số mới, cập nhật điểm số
+      book.ratings[existingRatingIndex].score = score;
+    }
+  } else if (score > 0) {
+    // Nếu chưa đánh giá và có điểm số mới (lớn hơn 0), thêm mới đánh giá
+    book.ratings.push({ userId: userId, score });
+  }
+
+  return await Book.updateOne({ _id: bookId }, book); // Trả về sách đã được cập nhật
+}
+
+export async function checkUserRating(
+  userId: string,
+  bookId: string,
+): Promise<InstanceType<typeof Number> | null> {
+  const book = await getBookById(bookId);
+  if (!book) {
+    throw new Error('Book not found');
+  }
+  const rating = book.ratings.find(
+    (rating) => rating.userId.toString() === userId,
+  );
+  return rating ? rating.score : null;
 }
 
 export const updateBook = async (id: string, data: any) => {

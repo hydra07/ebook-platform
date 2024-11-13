@@ -55,6 +55,9 @@ const readerSchema = new Schema(
         lastAccess: {
           type: String,
         },
+        takeNote: {
+          type: String,
+        },
       },
       // {
       //   type: mongoose.Schema.Types.ObjectId,

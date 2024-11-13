@@ -56,6 +56,7 @@ export default function BookPage({ page, query, sort, path }: PageQuery) {
     fetch();
     return () => {
       setBooks([]);
+      setIsLoading(true);
     };
   }, [page, query, sort, path]);
   return (
