@@ -32,6 +32,7 @@ export default function EditBook({ params }: { params: { id: string } }) {
       bookUrl: "",
       price: 0,
       currentQuantity: 0,
+      forPremium: "",
     },
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -309,6 +310,28 @@ export default function EditBook({ params }: { params: { id: string } }) {
             >
               Add Category
             </button>
+          </div>
+          <div>
+          <FormField
+            control={form.control}
+            name="forPremium"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>For Premium Users</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select</option>
+                    <option value="user">User</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="flex justify-between items-center mt-6">
             <Link
